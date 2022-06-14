@@ -9,19 +9,24 @@ export default function SignUpScreen() {
         <h2>save, share and discover the best links on the web</h2>
       </header>
       <StyledForm>
-        <input name="email" type="email" placeholder="e-mail" />
-        <input name="password" type="password" placeholder="password" />
-        <input name="username" type="text" placeholder="username" />
-        <input name="picture" type="url" placeholder="picture url" />
+        <input name="email" type="email" placeholder="e-mail" required />
+        <input
+          name="password"
+          type="password"
+          placeholder="password"
+          required
+        />
+        <input name="username" type="text" placeholder="username" required />
+        <input name="picture" type="url" placeholder="picture url" required />
         <button type="submit">Sign Up</button>
+        <StyledLink to="/">Switch back to log in</StyledLink>
       </StyledForm>
-      <StyledLink to="/">Switch back to log in</StyledLink>
     </SignUpScreenContainer>
   );
 }
 
 const SignUpScreenContainer = styled.div`
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   background-color: #333;
 
@@ -55,6 +60,31 @@ const SignUpScreenContainer = styled.div`
       line-height: 34px;
       text-align: center;
       margin: 0 20%;
+    }
+  }
+
+  @media (min-width: 600px) {
+    display: flex;
+    height: 100vh;
+
+    header {
+      width: 70%;
+      height: 100vh;
+      display: block;
+      padding: 300px 10%;
+
+      h1 {
+        font-size: 106px;
+        line-height: 117px;
+      }
+
+      h2 {
+        font-size: 43px;
+        line-height: 64px;
+        text-align: left;
+        width: 448px;
+        margin: 0;
+      }
     }
   }
 `;
@@ -93,6 +123,19 @@ const StyledForm = styled.form`
     line-height: 33px;
     letter-spacing: 0.03em;
     margin-bottom: 18px;
+    cursor: pointer;
+  }
+
+  @media (min-width: 600px) {
+    width: 40%;
+    justify-content: center;
+
+    input,
+    button {
+      height: 65px;
+      font-size: 27px;
+      line-height: 40px;
+    }
   }
 `;
 
@@ -102,4 +145,9 @@ const StyledLink = styled(Link)`
   color: #fff;
   font-size: 17px;
   line-height: 20px;
+
+  @media (min-width: 600px) {
+    font-size: 20px;
+    line-height: 24px;
+  }
 `;
