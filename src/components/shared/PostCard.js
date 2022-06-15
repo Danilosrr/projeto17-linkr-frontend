@@ -1,18 +1,18 @@
 import styled from "styled-components";
 
-export default function PostCard() {
+export default function PostCard(props) {
+
+    const { id, idUser, link, description, picture, username } = props.post;
 
     return (
 
         <Div>
             <div className="right-container">
-                <img src="https://www.viewhotels.jp/ryogoku/wp-content/uploads/sites/9/2020/03/test-img.jpg" alt="User"></img>
+                <img src={picture} alt={username}></img>
             </div>
             <div className="left-container">
-                <p className="username">Usuário</p>
-                <p className="description">Muito maneiro esse tutorial de Material UI
-                    com React, deem uma olhada! #react
-                    #material
+                <p className="username">{username}</p>
+                <p className="description">{description}
                 </p>
                 <p>preview do link aqui</p>
             </div>
