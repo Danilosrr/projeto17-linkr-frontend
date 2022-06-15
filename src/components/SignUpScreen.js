@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import "../assets/css/fonts.css"
 
 export default function SignUpScreen() {
   return (
@@ -54,7 +55,7 @@ const SignUpScreenContainer = styled.div`
       font-size: 23px;
       line-height: 34px;
       text-align: center;
-      margin: 0 20%;
+      margin: 0 16%;
     }
   }
 `;
