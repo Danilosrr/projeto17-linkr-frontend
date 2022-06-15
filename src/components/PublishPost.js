@@ -2,30 +2,29 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import styled from "styled-components";
 import LoadingContext from '../context/LoadingContext.js';
-import UserInfoContext from '../context/UserContext.js';
+import UserContext from '../context/UserContext.js';
 
 export default function PublishPost() {
 
   const { loading, setLoading } = useContext(LoadingContext);
-  const { username } = useContext(UserInfoContext);
+  const { token } = useContext(UserContext);
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
 
-  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
-  const token = "" //jwt recebido no login
+  const tokenJwt = !token.token ? JSON.parse(localStorage.getItem("tokenUser")) : token;
+  const URL = "https://projeto17-linkr-cdio.herokuapp.com/"; 
+
   function sendPost(event){
     event.preventDefault();
     setLoading(true);
-    
     const post = {
-      username: username,
       link: url,
       description: text
     }
 
-    const promise = axios.post(`${URL}user/publish`, post, {
+    const promise = axios.post(`${URL}posts`, post, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${tokenJwt.token}`,
       }
     });
     promise.then((response) => {
@@ -35,6 +34,7 @@ export default function PublishPost() {
     });
     promise.catch((error) => {
       alert('Houve um erro ao publicar seu link');
+      console.log(error);
       setLoading(false);
     });
   };
