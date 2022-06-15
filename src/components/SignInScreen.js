@@ -22,7 +22,7 @@ export default function SignInScreen() {
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
 
   useEffect(() => {
-    if (tokenObject?.token) {
+    if (tokenObject) {
       setToken({ ...JSON.parse(tokenObject) });
       navigate("/timeline");
     }
