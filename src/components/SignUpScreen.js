@@ -1,28 +1,95 @@
+import { useContext, useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import "../assets/css/fonts.css"
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
+import "../assets/css/fonts.css";
+import LoadingContext from "../context/LoadingContext";
 
 export default function SignUpScreen() {
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+    username: "",
+    picture: "",
+  });
+  const { loading, setLoading } = useContext(LoadingContext);
+
+  const navigate = useNavigate();
+
+  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+
+  function updateUserInfo(event) {
+    const { name, value } = event.target;
+    setUserInfo((prevState) => ({ ...prevState, [name]: value }));
+  }
+
+  function signUpUser(event) {
+    event.preventDefault();
+    setLoading(true);
+    const promise = axios.post(`${URL}sign-up`, userInfo);
+    promise.then((response) => {
+      navigate("/");
+      setLoading(false);
+    });
+    promise.catch((error) => {
+      alert(error.response.data);
+      setLoading(false);
+    });
+  }
+
   return (
     <SignUpScreenContainer>
       <header>
         <h1>linkr</h1>
         <h2>save, share and discover the best links on the web</h2>
       </header>
-      <StyledForm>
-        <input name="email" type="email" placeholder="e-mail" />
-        <input name="password" type="password" placeholder="password" />
-        <input name="username" type="text" placeholder="username" />
-        <input name="picture" type="url" placeholder="picture url" />
+      <StyledForm onSubmit={signUpUser}>
+        <input
+          name="email"
+          type="email"
+          disabled={loading}
+          placeholder="e-mail"
+          value={userInfo.email}
+          onChange={updateUserInfo}
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          disabled={loading}
+          placeholder="password"
+          value={userInfo.password}
+          onChange={updateUserInfo}
+          required
+        />
+        <input
+          name="username"
+          type="text"
+          disabled={loading}
+          placeholder="username"
+          value={userInfo.username}
+          onChange={updateUserInfo}
+          required
+        />
+        <input
+          name="picture"
+          type="url"
+          disabled={loading}
+          placeholder="picture url"
+          value={userInfo.picture}
+          onChange={updateUserInfo}
+          required
+        />
         <button type="submit">Sign Up</button>
+        <StyledLink to="/">Switch back to log in</StyledLink>
       </StyledForm>
-      <StyledLink to="/">Switch back to log in</StyledLink>
     </SignUpScreenContainer>
   );
 }
 
 const SignUpScreenContainer = styled.div`
-  width: 100%;
+  width: 100vw;
   height: 100vh;
   background-color: #333;
 
@@ -56,6 +123,31 @@ const SignUpScreenContainer = styled.div`
       line-height: 34px;
       text-align: center;
       margin: 0 16%;
+    }
+  }
+
+  @media (min-width: 600px) {
+    display: flex;
+    height: 100vh;
+
+    header {
+      width: 70%;
+      height: 100vh;
+      display: block;
+      padding: 300px 10%;
+
+      h1 {
+        font-size: 106px;
+        line-height: 117px;
+      }
+
+      h2 {
+        font-size: 43px;
+        line-height: 64px;
+        text-align: left;
+        width: 448px;
+        margin: 0;
+      }
     }
   }
 `;
@@ -94,6 +186,22 @@ const StyledForm = styled.form`
     line-height: 33px;
     letter-spacing: 0.03em;
     margin-bottom: 18px;
+    cursor: pointer;
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  @media (min-width: 600px) {
+    width: 40%;
+    justify-content: center;
+
+    input,
+    button {
+      height: 65px;
+      font-size: 27px;
+      line-height: 40px;
+    }
   }
 `;
 
@@ -103,4 +211,9 @@ const StyledLink = styled(Link)`
   color: #fff;
   font-size: 17px;
   line-height: 20px;
+
+  @media (min-width: 600px) {
+    font-size: 20px;
+    line-height: 24px;
+  }
 `;

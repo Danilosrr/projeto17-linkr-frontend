@@ -8,13 +8,12 @@ import PublishPost from "./PublishPost";
 import SignUpScreen from "./SignUpScreen";
 
 export default function App() {
-
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   return (
     <>
       <GlobalStyle />
-      <LoadingContext.Provider value={{loading,setLoading}}>
+      <LoadingContext.Provider value={{ loading, setLoading }}>
         <UserInfoContext.Provider value={{}}>
           <BrowserRouter>
             <Routes>
