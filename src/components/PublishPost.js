@@ -1,27 +1,49 @@
 import React, { useState, useContext } from 'react';
+import axios from 'axios';
 import styled from "styled-components";
 import LoadingContext from '../context/LoadingContext.js';
+import UserInfoContext from '../context/UserContext.js';
 
 export default function PublishPost() {
 
   const { loading, setLoading } = useContext(LoadingContext);
+  const { username } = useContext(UserInfoContext);
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
 
+  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+  const token = "" //jwt recebido no login
   function sendPost(event){
     event.preventDefault();
-
     setLoading(true);
-    setTimeout(()=>
-      setLoading(false)
-    ,2000);
+    
+    const post = {
+      username: username,
+      link: url,
+      description: text
+    }
+
+    const promise = axios.post(`${URL}user/publish`, post, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    });
+    promise.then((response) => {
+      setUrl('');
+      setText('');
+      setLoading(false);
+    });
+    promise.catch((error) => {
+      alert('Houve um erro ao publicar seu link');
+      setLoading(false);
+    });
   };
 
   return (
     <PublishPostContainer>
       <label htmlFor="publishNewPost">What are you going to share today?</label>
       <form id="publishNewPost" onSubmit={loading?()=>{}:sendPost}>
-        <input name="url" type="url" placeholder="http://..." value={url} onChange={(e)=>setUrl(e.target.value)} disabled={loading}/>
+        <input name="url" type="url" placeholder="http://..." value={url} onChange={(e)=>setUrl(e.target.value)} disabled={loading} required/>
         <input name="text" type="text" placeholder="Awesome article about #javascript" id="postText" value={text} onChange={(e)=>setText(e.target.value)} disabled={loading}/>
         <input type="submit" value={loading?'Publishing':'Publish'} id="postButton" disabled={loading}/>
       </form>
