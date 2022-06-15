@@ -2,6 +2,7 @@ import styled from "styled-components";
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
 import PublishPost from "./PublishPost.js";
+import PostCard from "./shared/PostCard.js";
 
 export default function TimelineScreen(){
     return (
@@ -9,6 +10,7 @@ export default function TimelineScreen(){
             <HeaderBar />
             <h1>timeline</h1>
             <PublishPost />
+            <PostCard />
         </Div>
     );
 }
