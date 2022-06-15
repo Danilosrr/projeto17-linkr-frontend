@@ -129,8 +129,6 @@ const GlobalStyle = createGlobalStyle`
       border-spacing: 0;
     }
 
-    @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Oswald:wght@400;700&family=Passion+One:wght@700&display=swap');
-
     * {
         box-sizing: border-box;
     }
