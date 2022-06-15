@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+
+import "../assets/css/fonts.css";
+import LoadingContext from "../context/LoadingContext";
 
 export default function SignUpScreen() {
   const [userInfo, setUserInfo] = useState({
@@ -10,7 +13,9 @@ export default function SignUpScreen() {
     username: "",
     picture: "",
   });
-  const [disabled, setDisabled] = useState(false);
+  const { loading, setLoading } = useContext(LoadingContext);
+
+  const navigate = useNavigate();
 
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
 
@@ -21,9 +26,16 @@ export default function SignUpScreen() {
 
   function signUpUser(event) {
     event.preventDefault();
-    setDisabled(true);
+    setLoading(true);
     const promise = axios.post(`${URL}sign-up`, userInfo);
-    promise.then()
+    promise.then((response) => {
+      navigate("/");
+      setLoading(false);
+    });
+    promise.catch((error) => {
+      alert(error.response.data);
+      setLoading(false);
+    });
   }
 
   return (
@@ -32,11 +44,11 @@ export default function SignUpScreen() {
         <h1>linkr</h1>
         <h2>save, share and discover the best links on the web</h2>
       </header>
-      <StyledForm>
+      <StyledForm onSubmit={signUpUser}>
         <input
           name="email"
           type="email"
-          disabled={disabled}
+          disabled={loading}
           placeholder="e-mail"
           value={userInfo.email}
           onChange={updateUserInfo}
@@ -45,7 +57,7 @@ export default function SignUpScreen() {
         <input
           name="password"
           type="password"
-          disabled={disabled}
+          disabled={loading}
           placeholder="password"
           value={userInfo.password}
           onChange={updateUserInfo}
@@ -54,7 +66,7 @@ export default function SignUpScreen() {
         <input
           name="username"
           type="text"
-          disabled={disabled}
+          disabled={loading}
           placeholder="username"
           value={userInfo.username}
           onChange={updateUserInfo}
@@ -63,7 +75,7 @@ export default function SignUpScreen() {
         <input
           name="picture"
           type="url"
-          disabled={disabled}
+          disabled={loading}
           placeholder="picture url"
           value={userInfo.picture}
           onChange={updateUserInfo}
@@ -110,7 +122,7 @@ const SignUpScreenContainer = styled.div`
       font-size: 23px;
       line-height: 34px;
       text-align: center;
-      margin: 0 20%;
+      margin: 0 16%;
     }
   }
 
@@ -175,6 +187,9 @@ const StyledForm = styled.form`
     letter-spacing: 0.03em;
     margin-bottom: 18px;
     cursor: pointer;
+    &:disabled {
+      opacity: 0.5;
+    }
   }
 
   @media (min-width: 600px) {
