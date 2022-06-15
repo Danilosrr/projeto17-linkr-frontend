@@ -18,7 +18,7 @@ export default function App() {
         <UserInfoContext.Provider value={{}}>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<PublishPost/>}></Route>
+              <Route path="/" element={<></>}></Route>
               <Route path="/sign-up" element={<SignUpScreen />}></Route>
               <Route path="/" element={<></>}></Route>
               <Route path="/" element={<></>}></Route>
