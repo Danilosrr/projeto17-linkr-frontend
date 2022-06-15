@@ -10,12 +10,13 @@ import TimelineScreen from "./TimelineScreen.js";
 
 export default function App() {
   const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState('');
 
   return (
     <>
       <GlobalStyle />
       <LoadingContext.Provider value={{ loading, setLoading }}>
-        <UserInfoContext.Provider value={{}}>
+        <UserInfoContext.Provider value={{ username, setUsername }}>
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<></>}></Route>
