@@ -1,7 +1,31 @@
+import { useState } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function SignUpScreen() {
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+    username: "",
+    picture: "",
+  });
+  const [disabled, setDisabled] = useState(false);
+
+  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+
+  function updateUserInfo(event) {
+    const { name, value } = event.target;
+    setUserInfo((prevState) => ({ ...prevState, [name]: value }));
+  }
+
+  function signUpUser(event) {
+    event.preventDefault();
+    setDisabled(true);
+    const promise = axios.post(`${URL}sign-up`, userInfo);
+    promise.then()
+  }
+
   return (
     <SignUpScreenContainer>
       <header>
@@ -9,15 +33,42 @@ export default function SignUpScreen() {
         <h2>save, share and discover the best links on the web</h2>
       </header>
       <StyledForm>
-        <input name="email" type="email" placeholder="e-mail" required />
+        <input
+          name="email"
+          type="email"
+          disabled={disabled}
+          placeholder="e-mail"
+          value={userInfo.email}
+          onChange={updateUserInfo}
+          required
+        />
         <input
           name="password"
           type="password"
+          disabled={disabled}
           placeholder="password"
+          value={userInfo.password}
+          onChange={updateUserInfo}
           required
         />
-        <input name="username" type="text" placeholder="username" required />
-        <input name="picture" type="url" placeholder="picture url" required />
+        <input
+          name="username"
+          type="text"
+          disabled={disabled}
+          placeholder="username"
+          value={userInfo.username}
+          onChange={updateUserInfo}
+          required
+        />
+        <input
+          name="picture"
+          type="url"
+          disabled={disabled}
+          placeholder="picture url"
+          value={userInfo.picture}
+          onChange={updateUserInfo}
+          required
+        />
         <button type="submit">Sign Up</button>
         <StyledLink to="/">Switch back to log in</StyledLink>
       </StyledForm>
