@@ -2,29 +2,31 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 //import styled from "styled-components";
 import GlobalStyle from "../assets/theme/GlobalStyle";
-import UserInfoContext from "../context/UserContext";
+import UserContext from "../context/UserContext";
 import LoadingContext from "../context/LoadingContext";
 import PublishPost from "./PublishPost";
 import SignUpScreen from "./SignUpScreen";
+import SignInScreen from "./SignInScreen";
 
 export default function App() {
   const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState({});
 
   return (
     <>
       <GlobalStyle />
       <LoadingContext.Provider value={{ loading, setLoading }}>
-        <UserInfoContext.Provider value={{}}>
+        <UserContext.Provider value={{ token, setToken }}>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<></>}></Route>
-              <Route path="/sign-up" element={<SignUpScreen />}></Route>
-              <Route path="/" element={<></>}></Route>
-              <Route path="/" element={<></>}></Route>
-              <Route path="/" element={<></>}></Route>
+              <Route path="/" element={<SignInScreen />} />
+              <Route path="/sign-up" element={<SignUpScreen />} />
+              {/* <Route path="/" element={<></>} />
+              <Route path="/" element={<></>} />
+              <Route path="/" element={<></>} /> */}
             </Routes>
           </BrowserRouter>
-        </UserInfoContext.Provider>
+        </UserContext.Provider>
       </LoadingContext.Provider>
     </>
   );
