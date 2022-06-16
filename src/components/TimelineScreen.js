@@ -12,11 +12,11 @@ export default function TimelineScreen() {
     const [posts, setPosts] = useState(["initial"]);
 
     useEffect(() => {
-        request();
+        requestGetPosts();
         // eslint-disable-next-line
     }, []);
 
-    async function request() {
+    async function requestGetPosts() {
         try {
             const response = await axios.get("http://localhost:4000/posts");
             setPosts(response.data);
