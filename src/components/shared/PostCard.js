@@ -2,8 +2,11 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { IoHeartOutline, IoHeart } from "react-icons/io5";
+import ReactHashtag from "react-hashtag";
+
 import UserContext from "../../context/UserContext";
 import LoadingContext from "../../context/LoadingContext";
+import { useNavigate } from "react-router-dom";
 
 export default function PostCard(props) {
   const {
@@ -23,6 +26,8 @@ export default function PostCard(props) {
     ? JSON.parse(localStorage.getItem("tokenUser"))
     : token;
 
+  const navigate = useNavigate();
+
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
   // const URL = "http://localhost:4000/";
 
@@ -37,7 +42,7 @@ export default function PostCard(props) {
 
   function likePublishing() {
     console.log(props.post);
-    setLoading(true);
+    // setLoading(true);
 
     const promise = axios.post(
       `${URL}posts/like`,
@@ -51,16 +56,16 @@ export default function PostCard(props) {
     promise.then((response) => {
       setLikePost(true);
       console.log(response);
-      setLoading(false);
+      setLoading(!loading);
     });
     promise.catch((error) => {
       console.log(error);
-      setLoading(false);
+      setLoading(!loading);
     });
   }
 
   function checkLikePublishing() {
-    setLoading(true);
+    // setLoading(true);
 
     const promise = axios.post(
       `${URL}posts/checklike`,
@@ -73,11 +78,11 @@ export default function PostCard(props) {
     );
     promise.then((response) => {
       setLikePost(response.data);
-      setLoading(false);
+      // setLoading(false);
     });
     promise.catch((error) => {
       console.log(error);
-      setLoading(false);
+      // setLoading(false);
     });
   }
 
@@ -93,7 +98,15 @@ export default function PostCard(props) {
       </div>
       <div className="left-container">
         <p className="username">{username}</p>
-        <p className="description">{description}</p>
+        <p className="description">
+          <ReactHashtag
+            onHashtagClick={(hashtag) =>
+              navigate(`/hashtag/${hashtag.replace("#", "")}`)
+            }
+          >
+            {description}
+          </ReactHashtag>
+        </p>
 
         <div className="link-metadata" onClick={() => redirectToLink()}>
           <div className="container-title-description">
@@ -164,6 +177,11 @@ const Div = styled.div`
     color: #b7b7b7;
     margin-top: 7px;
     margin-bottom: 13px;
+
+    span {
+      font-weight: 700;
+      color: #fff;
+    }
   }
 
   .link-metadata {
