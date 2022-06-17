@@ -9,18 +9,25 @@ import PostCard from "./shared/PostCard.js";
 export default function TimelineScreen() {
 
     // eslint-disable-next-line
+    const [refresh, setRefresh] = useState([]);
     const [posts, setPosts] = useState(["initial"]);
+    const [user, setUser] = useState({});
+    let tokenObject = localStorage.getItem("tokenUser");
+    const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
 
     useEffect(() => {
         request();
         // eslint-disable-next-line
-    }, []);
+    }, [refresh]);
 
     async function request() {
         try {
-            const response = await axios.get("http://localhost:4000/posts");
+            const response = await axios.get(`${URL}posts`);
+            const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
+            const user = await axios.get(`${URL}userToken`, config);
             setPosts(response.data);
-            
+            setUser(user.data);
+
         } catch (e) {
             setPosts(["error"]);
             console.log(e);
@@ -52,6 +59,8 @@ export default function TimelineScreen() {
                     <PostCard
                         key={id}
                         post={post}
+                        user={user.id}
+                        refresh={setRefresh}
                     />
                 );
             })
