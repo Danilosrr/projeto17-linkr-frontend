@@ -66,7 +66,7 @@ const Div = styled.div`
   }
 
   @media (min-width: 600px) {
-    padding: 10px 17px 0 28px;
+    padding: 10px 27px 0 28px;
 
     p {
       font-size: 49px;

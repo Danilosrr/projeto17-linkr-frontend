@@ -32,7 +32,7 @@ export default function TimelineByHashtagScreen() {
     }
 
     requestGetPostsByHashtag();
-  }, [refreshScreen]);
+  }, [refreshScreen, token]);
 
   async function requestGetPostsByHashtag() {
     try {
