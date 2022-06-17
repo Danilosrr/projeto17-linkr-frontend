@@ -1,22 +1,22 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
 import PublishPost from "./PublishPost.js";
 import PostCard from "./shared/PostCard.js";
-import LoadingContext from "../context/LoadingContext";
 
 export default function TimelineScreen() {
 
     // eslint-disable-next-line
-    const { loading } = useContext(LoadingContext);
+    const [refreshTimeline, setRefreshTimeline] = useState(false);
     const [posts, setPosts] = useState(["initial"]);
+
 
     useEffect(() => {
         requestGetPosts();
         // eslint-disable-next-line
-    }, [loading]);
+    }, [refreshTimeline]);
 
     async function requestGetPosts() {
         try {
@@ -30,6 +30,8 @@ export default function TimelineScreen() {
     }
 
     function renderPosts(posts) {
+        console.log("aqui");
+
         if (posts.length === 0) {
             return (
                 <div className="message-container">
@@ -39,6 +41,7 @@ export default function TimelineScreen() {
         }
 
         if (posts[0] === "error") {
+
             return (
                 <div className="message-container">
                     <p className="message">An error occured while trying to fetch the posts, please refresh the page</p>
@@ -65,7 +68,7 @@ export default function TimelineScreen() {
         <Div>
             <HeaderBar />
             <h1>timeline</h1>
-            <PublishPost />
+            <PublishPost refreshTimeline={refreshTimeline} setRefreshTimeline={setRefreshTimeline}/>
             <div className="message-container">
                 <p className="message">Loading . . .</p>
             </div>
@@ -74,7 +77,7 @@ export default function TimelineScreen() {
         <Div>
             <HeaderBar />
             <h1>timeline</h1>
-            <PublishPost />
+            <PublishPost refreshTimeline={refreshTimeline} setRefreshTimeline={setRefreshTimeline}/>
             {
                 renderPosts(posts)
             }
