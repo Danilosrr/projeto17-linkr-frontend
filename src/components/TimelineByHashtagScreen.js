@@ -120,4 +120,17 @@ const Div = styled.div`
     line-height: 33px;
     text-align: center;
   }
+
+  @media (min-width: 600px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    h1 {
+      width: 611px;
+      font-size: 43px;
+      line-height: 64px;
+      margin: calc(78px + 72px) 0 43px;
+    }
+  }
 `;
