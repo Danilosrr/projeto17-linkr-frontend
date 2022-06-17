@@ -8,6 +8,7 @@ import LoadingContext from "../context/LoadingContext";
 import SignUpScreen from "./SignUpScreen";
 import SignInScreen from "./SignInScreen";
 import TimelineScreen from "./TimelineScreen.js";
+import TimelineByHashtagScreen from "./TimelineByHashtagScreen.js";
 
 export default function App() {
   const [loading, setLoading] = useState(false);
@@ -26,6 +27,7 @@ export default function App() {
               <Route path="/" element={<SignInScreen />} />
               <Route path="/sign-up" element={<SignUpScreen />} />
               <Route path="/timeline" element={<TimelineScreen />} />
+              <Route path="/hashtag/:hashtag" element={<TimelineByHashtagScreen />} />
               {/* <Route path="/" element={<></>}></Route>
               <Route path="/" element={<></>}></Route> */}
             </Routes>
