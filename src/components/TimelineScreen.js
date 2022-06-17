@@ -1,20 +1,22 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
 import PublishPost from "./PublishPost.js";
 import PostCard from "./shared/PostCard.js";
+import LoadingContext from "../context/LoadingContext";
 
 export default function TimelineScreen() {
 
     // eslint-disable-next-line
+    const { loading } = useContext(LoadingContext);
     const [posts, setPosts] = useState(["initial"]);
 
     useEffect(() => {
         requestGetPosts();
         // eslint-disable-next-line
-    }, []);
+    }, [loading]);
 
     async function requestGetPosts() {
         try {
