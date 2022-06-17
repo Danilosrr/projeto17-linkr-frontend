@@ -1,18 +1,74 @@
+import React, { useState, useContext, useEffect } from 'react';
+import axios from "axios";
 import styled from "styled-components";
+import {IoHeartOutline,IoHeart} from "react-icons/io5";
+import UserContext from "../../context/UserContext";
+import LoadingContext from '../../context/LoadingContext';
 
 export default function PostCard(props) {
+    
+    const { link, description, picture, username, titleLink, imageLink, descriptionLink, id } = props.post;
+    const { token } = useContext(UserContext);
+    const { loading, setLoading } = useContext(LoadingContext);
+    const [likePost, setLikePost] = useState(false);
+    const tokenJwt = !token.token ? JSON.parse(localStorage.getItem("tokenUser")) : token;
 
-    const { link, description, picture, username, titleLink, imageLink, descriptionLink } = props.post;
+    //const URL = "https://projeto17-linkr-cdio.herokuapp.com/"; 
+    const URL = "http://localhost:4000/";
 
+    useEffect(() => {
+        checkLikePublishing();
+        // eslint-disable-next-line
+    }, [loading]);
+    
     function redirectToLink(){
         window.open(link, '_blank');
     }
+
+    function likePublishing(){
+        console.log(props.post); setLoading(true);
+
+        const promise = axios.post(`${URL}posts/like`, { idPost:id }, {
+            headers: {
+              Authorization: `Bearer ${tokenJwt.token}`,
+            }
+        });
+        promise.then((response) => {
+            setLikePost(true);
+            console.log(response); setLoading(false);
+        });
+        promise.catch((error) => {
+            console.log(error); setLoading(false);
+
+        });
+    };
+
+    function checkLikePublishing(){
+        setLoading(true);
+
+        const promise = axios.post(`${URL}posts/checklike`, { idPost:id }, {
+            headers: {
+              Authorization: `Bearer ${tokenJwt.token}`,
+            }
+        });
+        promise.then((response) => {
+            setLikePost(response.data); 
+            setLoading(false);
+        });
+        promise.catch((error) => {
+            console.log(error); setLoading(false);
+        });
+    };
 
     return (
 
         <Div>
             <div className="right-container">
                 <img src={picture} alt={username}></img>
+                {likePost?
+                    <IoHeart className="likebutton marked" onClick={likePublishing}/>:
+                    <IoHeartOutline className="likebutton" onClick={likePublishing}/>
+                }
             </div>
             <div className="left-container">
                 <p className="username">{username}</p>
@@ -40,6 +96,18 @@ margin-top: 19px;
 padding: 9px 18px 15px 15px;
 display: flex;
 justify-content: space-between;
+
+.likebutton {
+    width:100%;
+    margin-top: 10px;
+    align-items: center;
+    font-size: 20px;
+    color: #FFFFFF;
+};
+
+.marked {
+    color: #AC0000;
+}
 
 .right-container img {
     border-radius: 50%;
