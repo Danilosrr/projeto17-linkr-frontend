@@ -1,19 +1,35 @@
 import styled from "styled-components";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
 import PublishPost from "./PublishPost.js";
 import PostCard from "./shared/PostCard.js";
+import UserContext from "../context/UserContext";
 
 export default function TimelineScreen() {
   // eslint-disable-next-line
   const [refreshTimeline, setRefreshTimeline] = useState(false);
   const [posts, setPosts] = useState(["initial"]);
+  const { token, setToken } = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
 
+  const localToken = JSON.parse(localStorage.getItem("tokenUser"));
+
   useEffect(() => {
+    if (!token.token) {
+      if (!localToken) {
+        navigate("/");
+        console.log("teste");
+      } else {
+        setToken({ ...localToken });
+      }
+    }
     requestGetPosts();
     // eslint-disable-next-line
   }, [refreshTimeline]);
