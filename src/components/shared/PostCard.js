@@ -11,6 +11,7 @@ export default function PostCard(props) {
     const { token } = useContext(UserContext);
     const { loading, setLoading } = useContext(LoadingContext);
     const [likePost, setLikePost] = useState(false);
+    const [likesCount, setLikesCount] = useState(0);
     const tokenJwt = !token.token ? JSON.parse(localStorage.getItem("tokenUser")) : token;
 
     //const URL = "https://projeto17-linkr-cdio.herokuapp.com/"; 
@@ -18,7 +19,7 @@ export default function PostCard(props) {
 
     useEffect(() => {
         checkLikePublishing();
-        // eslint-disable-next-line
+        getLikesCount();
     }, [loading]);
     
     function redirectToLink(){
@@ -60,6 +61,20 @@ export default function PostCard(props) {
         });
     };
 
+    function getLikesCount(){
+        setLoading(true);
+
+        const promise = axios.post(`${URL}posts/likecount`, { idPost:id });
+        
+        promise.then((response) => {
+            setLikesCount(response.data); 
+            setLoading(false);
+        });
+        promise.catch((error) => {
+            console.log(error); setLoading(false);
+        });
+    }
+
     return (
 
         <Div>
@@ -69,6 +84,7 @@ export default function PostCard(props) {
                     <IoHeart className="likebutton marked" onClick={likePublishing}/>:
                     <IoHeartOutline className="likebutton" onClick={likePublishing}/>
                 }
+                <p>{likesCount} likes</p>
             </div>
             <div className="left-container">
                 <p className="username">{username}</p>
@@ -119,6 +135,15 @@ justify-content: space-between;
 
 .right-container {
     margin-right: 14px;
+}
+
+.right-container p {
+    font-family: 'Lato', normal;
+    font-weight: 400;
+    font-size: 9px;
+    line-height: 11px;
+    text-align: center;
+    color: #FFFFFF;
 }
 
 .left-container {
