@@ -1,64 +1,85 @@
 import styled from "styled-components";
-import "./../../assets/css/fonts.css"
+import "./../../assets/css/fonts.css";
 import { IoChevronDown } from "react-icons/io5";
 import { IconContext } from "react-icons";
 
-
-
 export default function HeaderBar() {
-    return (
-        <Div>
-            <p>linkr</p>
-            <div className="right-container">
-                <IconContext.Provider value={{ color: "white", size: "2em" }}>
-                    <div>
-                        <IoChevronDown />
-                    </div>
-                </IconContext.Provider>
+  return (
+    <Div>
+      <p>linkr</p>
+      <div className="right-container">
+        <IconContext.Provider value={{ color: "white", size: "2em" }}>
+          <div>
+            <IoChevronDown className="arrow" />
+          </div>
+        </IconContext.Provider>
 
-                <img src="https://www.viewhotels.jp/ryogoku/wp-content/uploads/sites/9/2020/03/test-img.jpg" alt="User"></img>
-            </div>
-        </Div>
-    );
+        <img
+          src="https://www.viewhotels.jp/ryogoku/wp-content/uploads/sites/9/2020/03/test-img.jpg"
+          alt="User"
+        ></img>
+      </div>
+    </Div>
+  );
 }
 
 const Div = styled.div`
+  background-color: #151515;
+  width: 100vw;
+  height: 72px;
+  color: white;
+  padding: 12px 14px 0 17px;
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  position: fixed;
+  top: 0;
+  left: 0;
+  /*FIXME: make it appears only on scroll-up*/
 
-background-color: #151515;
-width: 100vw;
-height: 72px;
-color: white;
-padding: 12px 14px 0 17px;
-display: flex;
-align-content: center;
-justify-content: space-between;
-box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-position: fixed;
-top: 0;
-left: 0;
-/*FIXME: make it appears only on scroll-up*/
-
-p {
-    font-family: 'Passion One';
+  p {
+    font-family: "Passion One";
     font-style: normal;
     font-weight: 700;
     font-size: 45px;
     line-height: 50px;
     letter-spacing: 0.05em;
-}
+  }
 
-img {
+  img {
     border-radius: 50%;
     width: 44px;
     height: 44px;
     object-fit: cover;
     margin-left: 12px;
-}
+  }
 
-.right-container {
+  .arrow {
+    font-size: 15px;
+  }
+
+  .right-container {
     display: flex;
     align-items: center;
     padding-bottom: 16px;
-}
+  }
 
+  @media (min-width: 600px) {
+    padding: 10px 27px 0 28px;
+
+    p {
+      font-size: 49px;
+      line-height: 54px;
+    }
+
+    .arrow {
+      font-size: 18px;
+    }
+
+    img {
+      width: 53px;
+      height: 53px;
+    }
+  }
 `;
