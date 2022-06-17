@@ -1,23 +1,24 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import styled from "styled-components";
-import LoadingContext from '../context/LoadingContext.js';
 import UserContext from '../context/UserContext.js';
 
-export default function PublishPost() {
+export default function PublishPost(props) {
 
-  const { loading, setLoading } = useContext(LoadingContext);
+  let { setRefreshTimeline, refreshTimeline } = props;
+
   const { token } = useContext(UserContext);
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
+  const [publishLoading, setPublishLoading] = useState(false);
 
   const tokenJwt = !token.token ? JSON.parse(localStorage.getItem("tokenUser")) : token;
-  //const URL = "https://projeto17-linkr-cdio.herokuapp.com/"; 
-  const URL = "http://localhost:4000/";
+  const URL = "https://projeto17-linkr-cdio.herokuapp.com/"; 
+  //const URL = "http://localhost:4000/";
 
   function sendPost(event){
     event.preventDefault();
-    setLoading(true);
+    setPublishLoading(true);
     const post = {
       link: url,
       description: text
@@ -31,22 +32,25 @@ export default function PublishPost() {
     promise.then((response) => {
       setUrl('');
       setText('');
-      setLoading(false);
+      const newRefreshTimeline = !refreshTimeline;
+      setRefreshTimeline(newRefreshTimeline);
+      setPublishLoading(false);
     });
     promise.catch((error) => {
       alert('Houve um erro ao publicar seu link');
-      console.log(error);
-      setLoading(false);
+      const newRefreshTimeline = !refreshTimeline;
+      setRefreshTimeline(newRefreshTimeline);
+      setPublishLoading(false);
     });
   };
 
   return (
     <PublishPostContainer>
       <label htmlFor="publishNewPost">What are you going to share today?</label>
-      <form id="publishNewPost" onSubmit={loading?()=>{}:sendPost}>
-        <input name="url" type="url" placeholder="http://..." value={url} onChange={(e)=>setUrl(e.target.value)} disabled={loading} required/>
-        <input name="text" type="text" placeholder="Awesome article about #javascript" id="postText" value={text} onChange={(e)=>setText(e.target.value)} disabled={loading}/>
-        <input type="submit" value={loading?'Publishing':'Publish'} id="postButton" disabled={loading}/>
+      <form id="publishNewPost" onSubmit={publishLoading ? ()=>{}:sendPost}>
+        <input name="url" type="url" placeholder="http://..." value={url} onChange={(e)=>setUrl(e.target.value)} disabled={publishLoading} required/>
+        <input name="text" type="text" placeholder="Awesome article about #javascript" id="postText" value={text} onChange={(e)=>setText(e.target.value)} disabled={publishLoading}/>
+        <input type="submit" value={publishLoading ? 'Publishing':'Publish'} id="postButton" disabled={publishLoading}/>
       </form>
     </PublishPostContainer>
   );

@@ -3,19 +3,18 @@ import axios from "axios";
 import styled from "styled-components";
 import {IoHeartOutline,IoHeart} from "react-icons/io5";
 import UserContext from "../../context/UserContext";
-import LoadingContext from '../../context/LoadingContext';
 
 export default function PostCard(props) {
     
     const { link, description, picture, username, titleLink, imageLink, descriptionLink, id } = props.post;
     const { token } = useContext(UserContext);
-    const { loading, setLoading } = useContext(LoadingContext);
+    const [ loading, setLoading ] = useState(false);
     const [likePost, setLikePost] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
     const tokenJwt = !token.token ? JSON.parse(localStorage.getItem("tokenUser")) : token;
 
-    //const URL = "https://projeto17-linkr-cdio.herokuapp.com/"; 
-    const URL = "http://localhost:4000/";
+    const URL = "https://projeto17-linkr-cdio.herokuapp.com/"; 
+    //const URL = "http://localhost:4000/";
 
     useEffect(() => {
         checkLikePublishing();
