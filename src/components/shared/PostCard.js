@@ -129,7 +129,7 @@ const Div = styled.div`
   margin-top: 19px;
   padding: 9px 18px 15px 15px;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 
   .likebutton {
     width: 100%;
@@ -152,7 +152,7 @@ const Div = styled.div`
   }
 
   .right-container {
-    margin-right: 14px;
+    padding-right: 14px;
   }
 
   .left-container {
@@ -162,6 +162,7 @@ const Div = styled.div`
     align-items: flex-start;
     padding-top: 4px;
   }
+
   .username {
     font-family: "Lato";
     font-size: 17px;
@@ -193,13 +194,16 @@ const Div = styled.div`
   }
 
   .link-metadata img {
-    width: 95px;
+    width: 100%;
     height: auto;
     object-fit: cover;
+    overflow: hidden;
     border-radius: 0 11px 11px 0;
+    margin: 0;
   }
 
   .container-title-description {
+    width: 100%;
     padding: 7px 7px 8px 11px;
   }
 
@@ -210,7 +214,7 @@ const Div = styled.div`
     color: #cecece;
     margin-bottom: 4px;
     height: 26px;
-    width: 175px;
+    width: 170px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -222,7 +226,7 @@ const Div = styled.div`
     color: #9b9595;
     margin-bottom: 4px;
     height: 44px;
-    width: 175px;
+    width: 170px;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -233,8 +237,64 @@ const Div = styled.div`
     line-height: 11px;
     color: #cecece;
     height: 22px;
-    width: 175px;
+    width: 170px;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  @media (min-width: 600px) {
+    width: 611px;
+    border-radius: 16px;
+    padding: 17px 21px 20px 18px;
+
+    .likebutton {
+      margin-top: 19px;
+    }
+
+    .right-container img {
+      display: flex;
+      width: 50px;
+      height: 50px;
+      margin-left: 0;
+    }
+
+    .username {
+      font-size: 19px;
+      line-height: 23px;
+    }
+
+    .description {
+      font-size: 17px;
+      line-height: 20px;
+    }
+
+    .link-metadata {
+      height: 155px;
+    }
+
+    .container-title-description {
+      padding: 24px 27px 23px 19px;
+    }
+
+    .link-title {
+      font-size: 16px;
+      line-height: 19px;
+      height: 38px;
+      width: 302px;
+    }
+
+    .link-description {
+      font-size: 11px;
+      line-height: 13px;
+      height: 39px;
+      margin: 5px 0 13px;
+      width: 302px;
+    }
+
+    .link-url {
+      font-size: 11px;
+      line-height: 13px;
+      width: 302px;
+    }
   }
 `;
