@@ -9,6 +9,7 @@ import SignUpScreen from "./SignUpScreen";
 import SignInScreen from "./SignInScreen";
 import TimelineScreen from "./TimelineScreen.js";
 import TimelineByHashtagScreen from "./TimelineByHashtagScreen.js";
+import UserTimelineScreen from "./UserTimelineScreen";
 
 export default function App() {
   const [loading, setLoading] = useState(false);
@@ -28,8 +29,8 @@ export default function App() {
               <Route path="/sign-up" element={<SignUpScreen />} />
               <Route path="/timeline" element={<TimelineScreen />} />
               <Route path="/hashtag/:hashtag" element={<TimelineByHashtagScreen />} />
-              {/* <Route path="/" element={<></>}></Route>
-              <Route path="/" element={<></>}></Route> */}
+              <Route path="/user/:id" element={<UserTimelineScreen/>}></Route>
+              {/*<Route path="/" element={<></>}></Route> */}
             </Routes>
           </BrowserRouter>
         </UserContext.Provider>
