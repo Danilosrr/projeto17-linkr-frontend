@@ -9,6 +9,7 @@ import axios from "axios";
 
 export default function HeaderBar() {
   const { token, setToken, userImage, setUserImage } = useContext(UserContext);
+  const [refresh, setRefresh] = useState({ token: "" });
   const navigate = useNavigate();
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
   const localToken = JSON.parse(localStorage.getItem("tokenUser"));
@@ -20,6 +21,7 @@ export default function HeaderBar() {
         console.log("teste");
       } else {
         setToken({ ...localToken });
+        setRefresh({ ...localToken });
       }
     } else {
       const promise = axios.get(`${URL}userToken`, {
@@ -35,11 +37,11 @@ export default function HeaderBar() {
         navigate("/");
       });
     }
-  }, [localToken, navigate, setToken, setUserImage, token, userImage]);
+  }, [refresh]);
 
   return (
     <Div>
-      <p>linkr</p>
+      <p onClick={() => navigate("/timeline")}>linkr</p>
       <div className="right-container">
         <IconContext.Provider value={{ color: "white", size: "2em" }}>
           <div>
@@ -66,6 +68,7 @@ const Div = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 3;
   /*FIXME: make it appears only on scroll-up*/
 
   p {
