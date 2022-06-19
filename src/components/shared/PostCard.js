@@ -112,7 +112,7 @@ export default function PostCard(props) {
     setLoading(true);
     try {
       const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
-      await axios.post(`http://localhost:4000/posts/${id}/edit`, { "description": descriptionEdit }, config);
+      await axios.post(`${URL}posts/${id}/edit`, { "description": descriptionEdit }, config);
       setDescription(descriptionEdit);
       setEditing(false);
       setLoading(false);
