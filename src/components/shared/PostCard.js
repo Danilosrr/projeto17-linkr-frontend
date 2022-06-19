@@ -1,7 +1,8 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { FaTrash } from "react-icons/fa";
+import { TiPencil } from "react-icons/ti";
 import { ThreeDots } from "react-loader-spinner";
 import { IoHeartOutline, IoHeart } from "react-icons/io5";
 import ReactHashtag from "react-hashtag";
@@ -12,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 export default function PostCard(props) {
   const {
     link,
-    description,
     picture,
     username,
     titleLink,
@@ -24,6 +24,9 @@ export default function PostCard(props) {
   const { token } = useContext(UserContext);
   const { loading, setLoading } = useContext(LoadingContext);
   const [likePost, setLikePost] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [descriptionEdit, setDescriptionEdit] = useState("");
+  const [description, setDescription] = useState(props.post.description);
   const [likesCount, setLikesCount] = useState(0);
   const tokenJwt = !token.token
     ? JSON.parse(localStorage.getItem("tokenUser"))
@@ -39,8 +42,9 @@ export default function PostCard(props) {
   />
   const tokenObject = localStorage.getItem("tokenUser");
   const navigate = useNavigate();
-  //const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
-  const URL = "http://localhost:4000/";
+  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+  // const URL = "http://localhost:4000/";
+  const inputRef = useRef(null);
 
   useEffect(() => {
     checkLikePublishing();
@@ -104,6 +108,53 @@ export default function PostCard(props) {
     setLoading(false);
   }
 
+  const openEdit = () => {
+    setEditing(true);
+    setDescriptionEdit(description);
+  }
+
+  useEffect(() => {
+    if (editing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [editing]);
+
+  const cancelEdit = () => {
+    setEditing(false);
+  }
+
+  const sendEdit = async () => {
+    setLoading(true);
+    try {
+      const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
+      await axios.post(`${URL}posts/${id}/edit`, { "description": descriptionEdit }, config);
+      setDescription(descriptionEdit);
+      setEditing(false);
+      setLoading(false);
+    } catch (e) {
+      console.log(e.message);
+      alert("Não foi possível salvar as alterações!");
+      setLoading(false);
+    }
+  }
+
+  const verifyKey = (e) => {
+    switch (e.keyCode) {
+      case 13:
+        sendEdit();
+        e.preventDefault();
+        break;
+
+      case 27:
+        cancelEdit();
+        e.preventDefault();
+        break;
+
+      default:
+        break;
+    }
+  }
+
   return (
     <>
       {
@@ -130,17 +181,32 @@ export default function PostCard(props) {
             <p>{likesCount} likes</p>
         </div>
         <div className="left-container">
-          {(idUser === user ? <FaTrash className="trash-icon" onClick={()=>{setExclude(true)}}/> : <></>)}
+          {(idUser === user ? <>
+            <TiPencil className="pencil-icon" onClick={() => { (editing ? cancelEdit() : openEdit()) }} />
+            <FaTrash className="trash-icon" onClick={() => { setExclude(true) }} />
+          </>
+            : <></>)}
+
           <p className="username">{username}</p>
           <p className="description">
-            <ReactHashtag
-              onHashtagClick={(hashtag) =>
-                navigate(`/hashtag/${hashtag.replace("#", "")}`)
-              }
-            >
-              {description}
-            </ReactHashtag>
+            {(editing ?
+              <textarea
+                disabled={loading}
+                ref={inputRef}
+                className="description-edit"
+                value={descriptionEdit}
+                onChange={(e) => { setDescriptionEdit(e.target.value) }}
+                onKeyDown={verifyKey} /> :
+              <ReactHashtag
+                onHashtagClick={(hashtag) =>
+                  navigate(`/hashtag/${hashtag.replace("#", "")}`)
+                }
+              >
+                {description}
+              </ReactHashtag>
+            )}
           </p>
+
 
           <div className="link-metadata" onClick={() => redirectToLink()}>
             <div className="container-title-description">
@@ -255,6 +321,7 @@ const Div = styled.div`
   display: flex;
   /* justify-content: space-between; */
 
+
   .likebutton {
     width: 100%;
     margin-top: 10px;
@@ -311,7 +378,15 @@ const Div = styled.div`
     top: 5px;
     right: 0px;
     color: white;
-    font-size: 13px; 
+    font-size: 15px; 
+  }
+
+  .pencil-icon {
+    position: absolute;
+    top: 4px;
+    right: 30px;
+    color: white;
+    font-size: 17px; 
   }
 
   .username {
@@ -329,10 +404,21 @@ const Div = styled.div`
     color: #b7b7b7;
     margin-top: 7px;
     margin-bottom: 13px;
+    width: 100%;
 
     span {
       font-weight: 700;
       color: #fff;
+    }
+
+    textarea {
+      width: 100%;
+      height: 45px;
+      resize: none;
+      font-family: 'Lato';
+      border-radius: 8px;
+      border: none;
+      padding: 2px 5px;
     }
   }
 
