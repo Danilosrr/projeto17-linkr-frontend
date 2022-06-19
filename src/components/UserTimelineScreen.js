@@ -1,15 +1,16 @@
 import styled from "styled-components";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
-import PublishPost from "./PublishPost.js";
 import PostCard from "./shared/PostCard.js";
 import UserContext from "../context/UserContext";
 
-export default function TimelineScreen() {
+export default function UserTimelineScreen() {
+    const {id} = useParams();
+
     // eslint-disable-next-line
     const [refreshTimeline, setRefreshTimeline] = useState(false);
     const [posts, setPosts] = useState(["initial"]);
@@ -33,7 +34,7 @@ export default function TimelineScreen() {
                 setToken({ ...localToken });
             }
         }
-        requestGetPosts();
+        requestGetUserPosts();
     }, [refreshTimeline]);
     // eslint-disable-next-line
 
@@ -44,7 +45,7 @@ export default function TimelineScreen() {
 
     async function request() {
         try {
-            const response = await axios.get(`${URL}posts`);
+            const response = await axios.get(`${URL}user/${id}`);
             const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
             const user = await axios.get(`${URL}userToken`, config);
             setPosts(response.data);
@@ -56,43 +57,14 @@ export default function TimelineScreen() {
         }
     }
 
-    async function requestGetPosts() {
+    async function requestGetUserPosts() {
         try {
-            const response = await axios.get(`${URL}posts`);
+            const response = await axios.get(`${URL}user/${id}`);
             setPosts(response.data);
         } catch (e) {
             setPosts(["error"]);
             console.log(e);
         }
-    }
-
-    function renderPosts(posts) {
-        console.log("aqui");
-
-        if (posts.length === 0) {
-            return (
-                <div className="message-container">
-                    <p className="message">There are no posts yet</p>
-                </div>
-            );
-        }
-
-        if (posts[0] === "error") {
-            return (
-                <div className="message-container">
-                    <p className="message">
-                        An error occured while trying to fetch the posts, please refresh the
-                        page
-                    </p>
-                </div>
-            );
-        }
-
-        return posts.map((post) => {
-            const { id } = post;
-
-            return <PostCard key={id} post={post} />;
-        });
     }
 
     function renderPosts(posts) {
@@ -131,11 +103,7 @@ export default function TimelineScreen() {
     return posts[0] === "initial" ? (
         <Div>
             <HeaderBar />
-            <h1>timeline</h1>
-            <PublishPost
-                refreshTimeline={refreshTimeline}
-                setRefreshTimeline={setRefreshTimeline}
-            />
+            <h1>{posts?posts[0].username:'User'} posts</h1>
             <div className="message-container">
                 <p className="message">Loading . . .</p>
             </div>
@@ -143,16 +111,11 @@ export default function TimelineScreen() {
     ) : (
         <Div>
             <HeaderBar />
-            <h1>timeline</h1>
-            <PublishPost
-                refreshTimeline={refreshTimeline}
-                setRefreshTimeline={setRefreshTimeline}
-            />
+            <h1>{posts?posts[0].username:'User'} posts</h1>
             {renderPosts(posts)}
         </Div>
     );
 }
-
 const Div = styled.div`
   h1 {
     font-family: "Oswald";

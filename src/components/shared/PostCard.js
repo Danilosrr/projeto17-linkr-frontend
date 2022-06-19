@@ -27,6 +27,7 @@ export default function PostCard(props) {
   const [editing, setEditing] = useState(false);
   const [descriptionEdit, setDescriptionEdit] = useState("");
   const [description, setDescription] = useState(props.post.description);
+  const [likesCount, setLikesCount] = useState(0);
   const tokenJwt = !token.token
     ? JSON.parse(localStorage.getItem("tokenUser"))
     : token;
@@ -47,12 +48,26 @@ export default function PostCard(props) {
 
   useEffect(() => {
     checkLikePublishing();
-    // eslint-disable-next-line
+    getLikesCount();
   }, [loading]);
 
   function redirectToLink() {
     window.open(link, "_blank");
   }
+
+  function getLikesCount(){
+    setLoading(true);
+
+    const promise = axios.post(`${URL}posts/likecount`, { idPost:id });
+
+    promise.then((response) => {
+        setLikesCount(response.data); 
+        setLoading(false);
+    });
+    promise.catch((error) => {
+        console.log(error); setLoading(false);
+    });
+  };
 
   function likePublishing() {
     console.log(props.post);
@@ -163,6 +178,7 @@ export default function PostCard(props) {
           ) : (
             <IoHeartOutline className="likebutton" onClick={likePublishing} />
           )}
+            <p>{likesCount} likes</p>
         </div>
         <div className="left-container">
           {(idUser === user ? <>
@@ -207,7 +223,6 @@ export default function PostCard(props) {
 
   function checkLikePublishing() {
     // setLoading(true);
-
     const promise = axios.post(
       `${URL}posts/checklike`,
       { idPost: id },
@@ -330,6 +345,24 @@ const Div = styled.div`
   .right-container {
     padding-right: 14px;
   }
+
+  .right-container p {
+    font-family: 'Lato', normal;
+    font-weight: 400;
+    font-size: 9px;
+    line-height: 11px;
+    text-align: center;
+    color: #FFFFFF;
+  }
+
+  .right-container p {
+    font-family: 'Lato', normal;
+    font-weight: 400;
+    font-size: 9px;
+    line-height: 11px;
+    text-align: center;
+    color: #FFFFFF;
+}
 
   .left-container {
     width: 100%;
