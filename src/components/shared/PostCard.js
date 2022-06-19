@@ -42,8 +42,8 @@ export default function PostCard(props) {
   />
   const tokenObject = localStorage.getItem("tokenUser");
   const navigate = useNavigate();
-  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
-  // const URL = "http://localhost:4000/";
+  //const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+  const URL = "http://localhost:4000/";
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -172,7 +172,7 @@ export default function PostCard(props) {
       }
       <Div>
         <div className="right-container">
-          <img src={picture} alt={username}></img>
+          <img src={picture} alt={username} onClick={() => navigate(`/user/${idUser}`)}></img>
           {likePost ? (
             <IoHeart className="likebutton marked" onClick={likePublishing} />
           ) : (
