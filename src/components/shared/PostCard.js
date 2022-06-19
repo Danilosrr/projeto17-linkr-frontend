@@ -19,7 +19,7 @@ export default function PostCard(props) {
     imageLink,
     descriptionLink,
     id,
-    idUser
+    idUser,
   } = props.post;
   const { token } = useContext(UserContext);
   const { loading, setLoading } = useContext(LoadingContext);
@@ -33,13 +33,15 @@ export default function PostCard(props) {
     : token;
   const { user, refresh } = props;
   const [exclude, setExclude] = useState(false);
-  const loader = <ThreeDots
-    type="Puff"
-    color="#FFFFFF"
-    height={40}
-    width={40}
-    timeout={3000}
-  />
+  const loader = (
+    <ThreeDots
+      type="Puff"
+      color="#FFFFFF"
+      height={40}
+      width={40}
+      timeout={3000}
+    />
+  );
   const tokenObject = localStorage.getItem("tokenUser");
   const navigate = useNavigate();
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
@@ -55,19 +57,20 @@ export default function PostCard(props) {
     window.open(link, "_blank");
   }
 
-  function getLikesCount(){
+  function getLikesCount() {
     setLoading(true);
 
-    const promise = axios.post(`${URL}posts/likecount`, { idPost:id });
+    const promise = axios.post(`${URL}posts/likecount`, { idPost: id });
 
     promise.then((response) => {
-        setLikesCount(response.data); 
-        setLoading(false);
+      setLikesCount(response.data);
+      setLoading(false);
     });
     promise.catch((error) => {
-        console.log(error); setLoading(false);
+      console.log(error);
+      setLoading(false);
     });
-  };
+  }
 
   function likePublishing() {
     console.log(props.post);
@@ -92,11 +95,12 @@ export default function PostCard(props) {
     });
   }
 
-
   const deletePost = async () => {
     setLoading(true);
     try {
-      const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
+      const config = {
+        headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` },
+      };
       const response = await axios.delete(`${URL}posts/${id}`, config);
       setExclude(false);
       refresh([]);
@@ -106,12 +110,12 @@ export default function PostCard(props) {
       console.log(e);
     }
     setLoading(false);
-  }
+  };
 
   const openEdit = () => {
     setEditing(true);
     setDescriptionEdit(description);
-  }
+  };
 
   useEffect(() => {
     if (editing && inputRef.current) {
@@ -121,13 +125,19 @@ export default function PostCard(props) {
 
   const cancelEdit = () => {
     setEditing(false);
-  }
+  };
 
   const sendEdit = async () => {
     setLoading(true);
     try {
-      const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
-      await axios.post(`${URL}posts/${id}/edit`, { "description": descriptionEdit }, config);
+      const config = {
+        headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` },
+      };
+      await axios.post(
+        `${URL}posts/${id}/edit`,
+        { description: descriptionEdit },
+        config
+      );
       setDescription(descriptionEdit);
       setEditing(false);
       setLoading(false);
@@ -136,7 +146,7 @@ export default function PostCard(props) {
       alert("Não foi possível salvar as alterações!");
       setLoading(false);
     }
-  }
+  };
 
   const verifyKey = (e) => {
     switch (e.keyCode) {
@@ -153,23 +163,32 @@ export default function PostCard(props) {
       default:
         break;
     }
-  }
+  };
 
   return (
     <>
-      {
-        exclude ?
-          <DeleteConfirm>
-            <div className="confirm-container">
-              <h2>Are you sure you want to delete this post?</h2>
-              <div>
-                <button className="cancel" onClick={() => { setExclude(false) }}>No, go back</button>
-                <button className="confirm" onClick={deletePost}>{(loading ? loader : "Yes, delete it")}</button>
-              </div>
+      {exclude ? (
+        <DeleteConfirm>
+          <div className="confirm-container">
+            <h2>Are you sure you want to delete this post?</h2>
+            <div>
+              <button
+                className="cancel"
+                onClick={() => {
+                  setExclude(false);
+                }}
+              >
+                No, go back
+              </button>
+              <button className="confirm" onClick={deletePost}>
+                {loading ? loader : "Yes, delete it"}
+              </button>
             </div>
-          </DeleteConfirm>
-          : <></>
-      }
+          </div>
+        </DeleteConfirm>
+      ) : (
+        <></>
+      )}
       <Div>
         <div className="right-container">
           <img src={picture} alt={username}></img>
@@ -178,25 +197,42 @@ export default function PostCard(props) {
           ) : (
             <IoHeartOutline className="likebutton" onClick={likePublishing} />
           )}
-            <p>{likesCount} likes</p>
+          <p>{likesCount} likes</p>
         </div>
         <div className="left-container">
-          {(idUser === user ? <>
-            <TiPencil className="pencil-icon" onClick={() => { (editing ? cancelEdit() : openEdit()) }} />
-            <FaTrash className="trash-icon" onClick={() => { setExclude(true) }} />
-          </>
-            : <></>)}
+          {idUser === user ? (
+            <>
+              <TiPencil
+                className="pencil-icon"
+                onClick={() => {
+                  editing ? cancelEdit() : openEdit();
+                }}
+              />
+              <FaTrash
+                className="trash-icon"
+                onClick={() => {
+                  setExclude(true);
+                }}
+              />
+            </>
+          ) : (
+            <></>
+          )}
 
           <p className="username">{username}</p>
           <p className="description">
-            {(editing ?
+            {editing ? (
               <textarea
                 disabled={loading}
                 ref={inputRef}
                 className="description-edit"
                 value={descriptionEdit}
-                onChange={(e) => { setDescriptionEdit(e.target.value) }}
-                onKeyDown={verifyKey} /> :
+                onChange={(e) => {
+                  setDescriptionEdit(e.target.value);
+                }}
+                onKeyDown={verifyKey}
+              />
+            ) : (
               <ReactHashtag
                 onHashtagClick={(hashtag) =>
                   navigate(`/hashtag/${hashtag.replace("#", "")}`)
@@ -206,7 +242,6 @@ export default function PostCard(props) {
               </ReactHashtag>
             )}
           </p>
-
 
           <div className="link-metadata" onClick={() => redirectToLink()}>
             <div className="container-title-description">
@@ -244,19 +279,19 @@ export default function PostCard(props) {
 }
 
 const DeleteConfirm = styled.div`
-position: fixed;
-top: 0;
-right: 0;
-height: 100vh;
-width: 100vw;
-background-color: rgba(255,255,255,0.9);
-z-index: 5;
-display: flex;
-flex-direction: row;
-justify-content: center;
-align-items: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 5;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 
-.confirm-container {
+  .confirm-container {
     height: auto;
     width: 75%;
     padding: 30px 0;
@@ -268,47 +303,47 @@ align-items: center;
     border-radius: 30px;
 
     div {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
     }
 
     h2 {
-        width: 200px;
-        color: white;
-        font-size: 20px;
-        font-family: 'Lato';
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 30px;
+      width: 200px;
+      color: white;
+      font-size: 20px;
+      font-family: "Lato";
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 30px;
     }
 
     button {
-        height: 30px;
-        width: 100px;
-        padding: 0 10px;
-        border: none;
-        border-radius: 4px;
-        font-family: 'Lato';
-        font-weight: 700;
-        font-size: 14px;
+      height: 30px;
+      width: 100px;
+      padding: 0 10px;
+      border: none;
+      border-radius: 4px;
+      font-family: "Lato";
+      font-weight: 700;
+      font-size: 14px;
     }
 
     .cancel {
-        background-color: white;
-        color: #1877F2;
+      background-color: white;
+      color: #1877f2;
     }
-    
+
     .confirm {
-        background-color: #1877F2;
-        color: white;
-        margin-left: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      background-color: #1877f2;
+      color: white;
+      margin-left: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-}
+  }
 `;
 
 const Div = styled.div`
@@ -320,7 +355,6 @@ const Div = styled.div`
   padding: 9px 18px 15px 15px;
   display: flex;
   /* justify-content: space-between; */
-
 
   .likebutton {
     width: 100%;
@@ -347,22 +381,22 @@ const Div = styled.div`
   }
 
   .right-container p {
-    font-family: 'Lato', normal;
+    font-family: "Lato", normal;
     font-weight: 400;
     font-size: 9px;
     line-height: 11px;
     text-align: center;
-    color: #FFFFFF;
+    color: #ffffff;
   }
 
   .right-container p {
-    font-family: 'Lato', normal;
+    font-family: "Lato", normal;
     font-weight: 400;
     font-size: 9px;
     line-height: 11px;
     text-align: center;
-    color: #FFFFFF;
-}
+    color: #ffffff;
+  }
 
   .left-container {
     width: 100%;
@@ -378,7 +412,7 @@ const Div = styled.div`
     top: 5px;
     right: 0px;
     color: white;
-    font-size: 15px; 
+    font-size: 15px;
   }
 
   .pencil-icon {
@@ -386,11 +420,11 @@ const Div = styled.div`
     top: 4px;
     right: 30px;
     color: white;
-    font-size: 17px; 
+    font-size: 17px;
   }
 
   .username {
-    font-family: 'Lato';
+    font-family: "Lato";
     font-size: 17px;
     line-height: 20px;
     color: #ffffff;
@@ -415,7 +449,7 @@ const Div = styled.div`
       width: 100%;
       height: 45px;
       resize: none;
-      font-family: 'Lato';
+      font-family: "Lato";
       border-radius: 8px;
       border: none;
       padding: 2px 5px;

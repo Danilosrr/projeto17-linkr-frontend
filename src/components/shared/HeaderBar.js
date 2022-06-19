@@ -1,9 +1,42 @@
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import "./../../assets/css/fonts.css";
 import { IoChevronDown } from "react-icons/io5";
 import { IconContext } from "react-icons";
+import UserContext from "../../context/UserContext";
+import axios from "axios";
 
 export default function HeaderBar() {
+  const { token, setToken, userImage, setUserImage } = useContext(UserContext);
+  const navigate = useNavigate();
+  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+  const localToken = JSON.parse(localStorage.getItem("tokenUser"));
+
+  useEffect(() => {
+    if (!token.token && !userImage) {
+      if (!localToken) {
+        navigate("/");
+        console.log("teste");
+      } else {
+        setToken({ ...localToken });
+      }
+    } else {
+      const promise = axios.get(`${URL}userToken`, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      });
+      promise.then(({ data }) => {
+        setUserImage(data.picture);
+      });
+      promise.catch((error) => {
+        console.log(error.response.data);
+        navigate("/");
+      });
+    }
+  }, [localToken, navigate, setToken, setUserImage, token, userImage]);
+
   return (
     <Div>
       <p>linkr</p>
@@ -14,10 +47,7 @@ export default function HeaderBar() {
           </div>
         </IconContext.Provider>
 
-        <img
-          src="https://www.viewhotels.jp/ryogoku/wp-content/uploads/sites/9/2020/03/test-img.jpg"
-          alt="User"
-        ></img>
+        <img src={userImage} alt="User"></img>
       </div>
     </Div>
   );

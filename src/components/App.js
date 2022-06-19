@@ -14,6 +14,7 @@ import UserTimelineScreen from "./UserTimelineScreen";
 export default function App() {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
+  const [userImage, setUserImage] = useState("");
   const [token, setToken] = useState({});
 
   return (
@@ -21,15 +22,25 @@ export default function App() {
       <GlobalStyle />
       <LoadingContext.Provider value={{ loading, setLoading }}>
         <UserContext.Provider
-          value={{ token, setToken, username, setUsername }}
+          value={{
+            token,
+            setToken,
+            username,
+            setUsername,
+            userImage,
+            setUserImage,
+          }}
         >
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<SignInScreen />} />
               <Route path="/sign-up" element={<SignUpScreen />} />
               <Route path="/timeline" element={<TimelineScreen />} />
-              <Route path="/hashtag/:hashtag" element={<TimelineByHashtagScreen />} />
-              <Route path="/user/:id" element={<UserTimelineScreen/>}></Route>
+              <Route
+                path="/hashtag/:hashtag"
+                element={<TimelineByHashtagScreen />}
+              />
+              <Route path="/user/:id" element={<UserTimelineScreen />}></Route>
               {/*<Route path="/" element={<></>}></Route> */}
             </Routes>
           </BrowserRouter>

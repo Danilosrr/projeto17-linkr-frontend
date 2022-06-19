@@ -22,15 +22,6 @@ export default function TimelineByHashtagScreen() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token.token) {
-      if (!localToken) {
-        navigate("/");
-        console.log("teste");
-      } else {
-        setToken({ ...localToken });
-      }
-    }
-
     requestGetPostsByHashtag();
   }, [refreshScreen, token]);
 
