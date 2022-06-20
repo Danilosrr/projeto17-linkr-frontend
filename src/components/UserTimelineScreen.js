@@ -59,7 +59,8 @@ export default function UserTimelineScreen() {
 
     async function requestGetUserPosts() {
         try {
-            const response = await axios.get(`${URL}user/${id}`);
+            const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
+            const response = await axios.get(`${URL}user/${id}`, config);
             setPosts(response.data);
         } catch (e) {
             setPosts(["error"]);

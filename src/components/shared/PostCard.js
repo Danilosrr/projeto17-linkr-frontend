@@ -56,10 +56,10 @@ export default function PostCard(props) {
     window.open(link, "_blank");
   }
 
-  function getLikesCount() {
-    // setLoading(true);
-
-    const promise = axios.post(`${URL}posts/likecount`, { idPost: id });
+  function getLikesCount(){
+    setLoading(true);
+    const config = { headers: { Authorization: `Bearer ${tokenJwt.token}` } };
+    const promise = axios.get(`${URL}posts/likecount/${id}`,config);
 
     promise.then((response) => {
       setLikesCount(response.data);
@@ -72,7 +72,6 @@ export default function PostCard(props) {
   }
 
   function likePublishing() {
-    console.log(props.post);
     // setLoading(true);
     const promise = axios.post(
       `${URL}posts/like`,
@@ -222,7 +221,7 @@ export default function PostCard(props) {
             <></>
           )}
 
-          <p className="username">{username}</p>
+          <p className="username" onClick={ () => navigate(`/user/${idUser}`) }>{username}</p>
           <p className="description">
             {editing ? (
               <textarea
