@@ -5,6 +5,7 @@ import "./../../assets/css/fonts.css";
 import { IoChevronDown } from "react-icons/io5";
 import { IconContext } from "react-icons";
 import UserContext from "../../context/UserContext";
+import SearchBar from "./SearchBar.js";
 import axios from "axios";
 
 export default function HeaderBar() {
@@ -43,6 +44,11 @@ export default function HeaderBar() {
   return (
     <Div>
       <p onClick={() => navigate("/timeline")}>linkr</p>
+
+      <div className="search-container-desktop">
+        <SearchBar />
+      </div>
+
       <div className="right-container">
         <IconContext.Provider value={{ color: "white", size: "2em" }}>
           <div>
@@ -80,6 +86,10 @@ const Div = styled.div`
     letter-spacing: 0.05em;
   }
 
+  .search-container-desktop {
+    display: none;
+  }
+
   img {
     border-radius: 50%;
     width: 44px;
@@ -100,6 +110,11 @@ const Div = styled.div`
 
   @media (min-width: 600px) {
     padding: 10px 27px 0 28px;
+
+    .search-container-desktop {
+      display: block;
+      margin-top: 4px;
+    }
 
     p {
       font-size: 49px;

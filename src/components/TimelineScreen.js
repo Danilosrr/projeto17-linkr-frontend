@@ -8,6 +8,7 @@ import HeaderBar from "./shared/HeaderBar.js";
 import TrendingHashtags from "./shared/TrendingHashtags.js";
 import PublishPost from "./PublishPost.js";
 import PostCard from "./shared/PostCard.js";
+import SearchBar from "./shared/SearchBar.js";
 import UserContext from "../context/UserContext";
 
 export default function TimelineScreen() {
@@ -34,7 +35,7 @@ export default function TimelineScreen() {
         } else {
             requestGetPosts();
         }
-    }, [refreshTimeline,token]);
+    }, [refreshTimeline, token]);
     // eslint-disable-next-line
 
     useEffect(() => {
@@ -44,7 +45,7 @@ export default function TimelineScreen() {
 
     async function request() {
         try {
-            const config = { headers: { Authorization: `Bearer ${token.token}` } };            
+            const config = { headers: { Authorization: `Bearer ${token.token}` } };
             const response = await axios.get(`${URL}posts`, config);
             const user = await axios.get(`${URL}userToken`, config);
             setPosts(response.data);
@@ -57,13 +58,13 @@ export default function TimelineScreen() {
     }
 
     async function requestGetPosts() {
-        try {            
+        try {
             const config = { headers: { Authorization: `Bearer ${token.token}` } };
-            const response = await axios.get(`${URL}posts`,config);
+            const response = await axios.get(`${URL}posts`, config);
             setPosts(response.data);
         } catch (e) {
             setPosts(["error"]);
-            console.log(e,"requestGet");
+            console.log(e, "requestGet");
         }
     }
 
@@ -134,6 +135,11 @@ export default function TimelineScreen() {
             <HeaderBar />
             <div className="timeline-screen-container">
                 <div className="timeline-container">
+
+                    <div className="search-container-mobile">
+                        <SearchBar />
+                    </div>
+
                     <h1>timeline</h1>
                     <PublishPost
                         refreshTimeline={refreshTimeline}
@@ -153,6 +159,11 @@ export default function TimelineScreen() {
             <HeaderBar />
             <div className="timeline-screen-container">
                 <div className="timeline-container">
+                    
+                    <div className="search-container-mobile">
+                        <SearchBar />
+                    </div>
+
                     <h1>timeline</h1>
                     <PublishPost
                         refreshTimeline={refreshTimeline}
@@ -178,13 +189,21 @@ const Div = styled.div`
       max-width: 100vw;
   }
 
+  .timeline-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+  }
+
   h1 {
     font-family: "Oswald";
     font-weight: 700;
     font-size: 33px;
     line-height: 49px;
     color: white;
-    margin: calc(19px + 72px) 0 19px 17px;
+    margin: 19px 0 19px 30px;
+    width: 100%;
+    text-align: left;
   }
 
   .message-container {
@@ -212,11 +231,19 @@ const Div = styled.div`
       display: none;
   }
 
+  .search-container-mobile {
+    margin-top: 82px;
+  }
+
   @media (min-width: 600px) {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    .search-container-mobile {
+        display: none;
+    }
 
     h1 {
       width: 611px;
