@@ -221,7 +221,7 @@ export default function PostCard(props) {
             <></>
           )}
 
-          <p className="username">{username}</p>
+          <p className="username" onClick={ () => navigate(`/user/${idUser}`) }>{username}</p>
           <p className="description">
             {editing ? (
               <textarea
