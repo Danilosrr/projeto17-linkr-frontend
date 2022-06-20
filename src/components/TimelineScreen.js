@@ -32,20 +32,21 @@ export default function TimelineScreen() {
             } else {
                 setToken({ ...localToken });
             }
+        } else {
+            requestGetPosts();
         }
-        requestGetPosts();
-    }, [refreshTimeline]);
+    }, [refreshTimeline,token]);
     // eslint-disable-next-line
 
     useEffect(() => {
-        request();
+        if (!!token.token) { request() };
         // eslint-disable-next-line
     }, [refresh]);
 
     async function request() {
         try {
-            const response = await axios.get(`${URL}posts`);
-            const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
+            const config = { headers: { Authorization: `Bearer ${token.token}` } };            
+            const response = await axios.get(`${URL}posts`, config);
             const user = await axios.get(`${URL}userToken`, config);
             setPosts(response.data);
             setUser(user.data);
@@ -57,12 +58,13 @@ export default function TimelineScreen() {
     }
 
     async function requestGetPosts() {
-        try {
-            const response = await axios.get(`${URL}posts`);
+        try {            
+            const config = { headers: { Authorization: `Bearer ${token.token}` } };
+            const response = await axios.get(`${URL}posts`,config);
             setPosts(response.data);
         } catch (e) {
             setPosts(["error"]);
-            console.log(e);
+            console.log(e,"requestGet");
         }
     }
 

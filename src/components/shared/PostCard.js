@@ -57,8 +57,8 @@ export default function PostCard(props) {
 
   function getLikesCount(){
     setLoading(true);
-
-    const promise = axios.post(`${URL}posts/likecount`, { idPost:id });
+    const config = { headers: { Authorization: `Bearer ${tokenJwt.token}` } };
+    const promise = axios.get(`${URL}posts/likecount/${id}`,config);
 
     promise.then((response) => {
         setLikesCount(response.data); 
@@ -70,7 +70,6 @@ export default function PostCard(props) {
   };
 
   function likePublishing() {
-    console.log(props.post);
     // setLoading(true);
     const promise = axios.post(
       `${URL}posts/like`,
