@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
 import PostCard from "./shared/PostCard.js";
+import TrendingHashtags from "./shared/TrendingHashtags.js";
 import UserContext from "../context/UserContext";
 
 export default function TimelineByHashtagScreen() {
@@ -76,21 +77,43 @@ export default function TimelineByHashtagScreen() {
   return filteredPosts[0] === "initial" ? (
     <Div>
       <HeaderBar />
-      <h1>{whitespace}</h1>
-      <div className="message-container">
-        <p className="message">Loading . . .</p>
+      <div className="timeline-screen-container">
+        <div className="timeline-container">
+          <h1>{whitespace}</h1>
+          <div className="message-container">
+            <p className="message">Loading . . .</p>
+          </div>
+        </div>
+        <div className="trending-hashtags-container">
+          <TrendingHashtags />
+        </div>
       </div>
     </Div>
   ) : (
     <Div>
       <HeaderBar />
-      <h1>#{hashtag}</h1>
-      {renderFilteredPosts(filteredPosts)}
+      <div className="timeline-screen-container">
+        <div className="timeline-container">
+          <h1>#{hashtag}</h1>
+          {renderFilteredPosts(filteredPosts)}
+        </div>
+        <div className="trending-hashtags-container">
+          <TrendingHashtags />
+        </div>
+      </div>
     </Div>
   );
 }
 
 const Div = styled.div`
+
+  .timeline-screen-container {
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      max-width: 100vw;
+  }
+
   h1 {
     font-family: "Oswald";
     font-weight: 700;
@@ -102,7 +125,7 @@ const Div = styled.div`
 
   .message-container {
     height: auto;
-    width: 80vw;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -121,16 +144,31 @@ const Div = styled.div`
     text-align: center;
   }
 
+  .trending-hashtags-container {
+      display: none;
+  }
+
   @media (min-width: 600px) {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 
     h1 {
       width: 611px;
       font-size: 43px;
       line-height: 64px;
       margin: calc(78px + 72px) 0 43px;
+    }
+
+    .timeline-screen-container {
+      max-width: 937px;
+    }
+
+    .trending-hashtags-container {
+        display: block;
+        margin-left: 25px;
+        margin-top: 255px;
     }
   }
 `;
