@@ -5,6 +5,7 @@ import "./../../assets/css/fonts.css";
 import { IoChevronDown } from "react-icons/io5";
 import { IconContext } from "react-icons";
 import UserContext from "../../context/UserContext";
+import SearchBar from "./SearchBar.js";
 import axios from "axios";
 
 export default function HeaderBar() {
@@ -43,6 +44,11 @@ export default function HeaderBar() {
   return (
     <Div>
       <p onClick={() => navigate("/timeline")}>linkr</p>
+
+      <div className="search-container-desktop">
+        <SearchBar />
+      </div>
+
       <div className="right-container">
         <IconContext.Provider value={{ color: "white", size: "2em" }}>
           <div>
@@ -58,7 +64,7 @@ export default function HeaderBar() {
 
 const Div = styled.div`
   background-color: #151515;
-  width: 100vw;
+  width: 100%;
   height: 72px;
   color: white;
   padding: 12px 14px 0 17px;
@@ -70,7 +76,6 @@ const Div = styled.div`
   top: 0;
   left: 0;
   z-index: 3;
-  /*FIXME: make it appears only on scroll-up*/
 
   p {
     font-family: "Passion One";
@@ -79,6 +84,10 @@ const Div = styled.div`
     font-size: 45px;
     line-height: 50px;
     letter-spacing: 0.05em;
+  }
+
+  .search-container-desktop {
+    display: none;
   }
 
   img {
@@ -101,6 +110,11 @@ const Div = styled.div`
 
   @media (min-width: 600px) {
     padding: 10px 27px 0 28px;
+
+    .search-container-desktop {
+      display: block;
+      margin-top: 4px;
+    }
 
     p {
       font-size: 49px;

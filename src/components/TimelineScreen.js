@@ -5,12 +5,13 @@ import { useNavigate } from "react-router-dom";
 
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
+import TrendingHashtags from "./shared/TrendingHashtags.js";
 import PublishPost from "./PublishPost.js";
 import PostCard from "./shared/PostCard.js";
+import SearchBar from "./shared/SearchBar.js";
 import UserContext from "../context/UserContext";
 
 export default function TimelineScreen() {
-    // eslint-disable-next-line
     const [refreshTimeline, setRefreshTimeline] = useState(false);
     const [posts, setPosts] = useState(["initial"]);
     const { token, setToken } = useContext(UserContext);
@@ -27,14 +28,13 @@ export default function TimelineScreen() {
         if (!token.token) {
             if (!localToken) {
                 navigate("/");
-                console.log("teste");
             } else {
                 setToken({ ...localToken });
             }
         } else {
             requestGetPosts();
         }
-    }, [refreshTimeline,token]);
+    }, [refreshTimeline, token]);
     // eslint-disable-next-line
 
     useEffect(() => {
@@ -44,7 +44,7 @@ export default function TimelineScreen() {
 
     async function request() {
         try {
-            const config = { headers: { Authorization: `Bearer ${token.token}` } };            
+            const config = { headers: { Authorization: `Bearer ${token.token}` } };
             const response = await axios.get(`${URL}posts`, config);
             const user = await axios.get(`${URL}userToken`, config);
             setPosts(response.data);
@@ -57,13 +57,13 @@ export default function TimelineScreen() {
     }
 
     async function requestGetPosts() {
-        try {            
+        try {
             const config = { headers: { Authorization: `Bearer ${token.token}` } };
-            const response = await axios.get(`${URL}posts`,config);
+            const response = await axios.get(`${URL}posts`, config);
             setPosts(response.data);
         } catch (e) {
             setPosts(["error"]);
-            console.log(e,"requestGet");
+            console.log(e, "requestGet");
         }
     }
 
@@ -132,41 +132,82 @@ export default function TimelineScreen() {
     return posts[0] === "initial" ? (
         <Div>
             <HeaderBar />
-            <h1>timeline</h1>
-            <PublishPost
-                refreshTimeline={refreshTimeline}
-                setRefreshTimeline={setRefreshTimeline}
-            />
-            <div className="message-container">
-                <p className="message">Loading . . .</p>
+            <div className="timeline-screen-container">
+                <div className="timeline-container">
+
+                    <div className="search-container-mobile">
+                        <SearchBar />
+                    </div>
+
+                    <h1>timeline</h1>
+                    <PublishPost
+                        refreshTimeline={refreshTimeline}
+                        setRefreshTimeline={setRefreshTimeline}
+                    />
+                    <div className="message-container">
+                        <p className="message">Loading . . .</p>
+                    </div>
+                </div>
+                <div className="trending-hashtags-container">
+                    <TrendingHashtags />
+                </div>
             </div>
         </Div>
     ) : (
         <Div>
             <HeaderBar />
-            <h1>timeline</h1>
-            <PublishPost
-                refreshTimeline={refreshTimeline}
-                setRefreshTimeline={setRefreshTimeline}
-            />
-            {renderPosts(posts)}
+            <div className="timeline-screen-container">
+                <div className="timeline-container">
+                    
+                    <div className="search-container-mobile">
+                        <SearchBar />
+                    </div>
+
+                    <h1>timeline</h1>
+                    <PublishPost
+                        refreshTimeline={refreshTimeline}
+                        setRefreshTimeline={setRefreshTimeline}
+                    />
+                    {renderPosts(posts)}
+                </div>
+                <div className="trending-hashtags-container">
+                    <TrendingHashtags />
+                </div>
+            </div>
         </Div>
     );
 }
 
 const Div = styled.div`
+  
+
+  .timeline-screen-container {
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      max-width: 100vw;
+  }
+
+  .timeline-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  
+  }
+
   h1 {
     font-family: "Oswald";
     font-weight: 700;
     font-size: 33px;
     line-height: 49px;
     color: white;
-    margin: calc(19px + 72px) 0 19px 17px;
+    margin: 19px 0 19px 30px;
+    width: 100%;
+    text-align: left;
   }
 
   .message-container {
     height: auto;
-    width: 80vw;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -185,16 +226,40 @@ const Div = styled.div`
     text-align: center;
   }
 
+  .trending-hashtags-container {
+      display: none;
+  }
+
+  .search-container-mobile {
+    margin-top: 82px;
+  }
+
   @media (min-width: 600px) {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+
+    .search-container-mobile {
+        display: none;
+    }
 
     h1 {
       width: 611px;
       font-size: 43px;
       line-height: 64px;
       margin: calc(78px + 72px) 0 43px;
+    }
+
+    .timeline-screen-container {
+      max-width: 937px;
+    }
+
+    .trending-hashtags-container {
+        display: block;
+        margin-left: 25px;
+        margin-top: 255px;
+        
     }
   }
 `;
