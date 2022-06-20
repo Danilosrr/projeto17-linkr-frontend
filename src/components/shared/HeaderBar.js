@@ -12,8 +12,8 @@ export default function HeaderBar() {
   const { token, setToken, userImage, setUserImage } = useContext(UserContext);
   const [refresh, setRefresh] = useState({ token: "" });
   const navigate = useNavigate();
-  //const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
-  const URL = "http://localhost:4000/";
+  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+
   const localToken = JSON.parse(localStorage.getItem("tokenUser"));
 
   useEffect(() => {
