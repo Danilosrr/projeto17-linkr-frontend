@@ -8,6 +8,7 @@ import { IoHeartOutline, IoHeart } from "react-icons/io5";
 import ReactHashtag from "react-hashtag";
 import UserContext from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
+import ReactTooltip from 'react-tooltip'
 
 export default function PostCard(props) {
   const {
@@ -21,12 +22,15 @@ export default function PostCard(props) {
     idUser,
   } = props.post;
   const { token } = useContext(UserContext);
+  const [reset, setReset] = useState([]); 
   const [loading, setLoading] = useState(false);
   const [likePost, setLikePost] = useState(false);
   const [editing, setEditing] = useState(false);
   const [descriptionEdit, setDescriptionEdit] = useState("");
   const [description, setDescription] = useState(props.post.description);
   const [likesCount, setLikesCount] = useState(0);
+  const [likesUsers, setLikesUsers] = useState([]);
+  const [tooltipString, setTooltipString] = useState("");
   const tokenJwt = !token.token
     ? JSON.parse(localStorage.getItem("tokenUser"))
     : token;
@@ -50,29 +54,35 @@ export default function PostCard(props) {
   useEffect(() => {
     checkLikePublishing();
     getLikesCount();
-  }, [loading]);
+  }, [reset]);
 
   function redirectToLink() {
     window.open(link, "_blank");
   }
 
-  function getLikesCount(){
+  function getLikesCount() {
     setLoading(true);
     const config = { headers: { Authorization: `Bearer ${tokenJwt.token}` } };
-    const promise = axios.get(`${URL}posts/likecount/${id}`,config);
+    const promise = axios.get(`${URL}posts/likecount/${id}`, config);
 
     promise.then((response) => {
-      setLikesCount(response.data);
-      // setLoading(false);
+      setLikesCount(Number(response.data.count));
+      setLikesUsers(response.data.users);
+      setLoading(false);
     });
     promise.catch((error) => {
       console.log(error);
-      // setLoading(false);
+      setLoading(false);
     });
   }
 
+  useEffect(() => {
+    setTooltipString(toolString());
+  }, [likesUsers])
+
   function likePublishing() {
-    // setLoading(true);
+    console.log(props.post);
+    setLoading(true);
     const promise = axios.post(
       `${URL}posts/like`,
       { idPost: id },
@@ -85,11 +95,12 @@ export default function PostCard(props) {
     promise.then((response) => {
       setLikePost(true);
       console.log(response);
-      setLoading(!loading);
+      setLoading(false);
+      setReset([]);
     });
     promise.catch((error) => {
       console.log(error);
-      setLoading(!loading);
+      setLoading(false);
     });
   }
 
@@ -163,6 +174,43 @@ export default function PostCard(props) {
     }
   };
 
+  const toolString = () => {
+    let string = "";
+
+    if (likePost) {
+      string += "Você";
+
+      if (likesCount === 4) {
+        string += `, ${likesUsers[0]} e outras ${likesCount - 2} pessoas`;
+      }
+      else if (likesCount === 3) {
+        string += `, ${likesUsers[0]} e outra 1 pessoa`;
+      }
+      else if (likesCount === 2) {
+        string += ` e ${likesUsers[0]}`;
+      }
+
+    } else {
+      if (likesCount > 3) {
+        string += `${likesUsers[0]}, ${likesUsers[1]} e outras ${likesCount - 2} pessoas`;
+      }
+      else if (likesCount === 3) {
+        string += `${likesUsers[0]}, ${likesUsers[1]} e outra 1 pessoa`;
+      }
+      else if (likesCount === 2) {
+        string += `${likesUsers[0]} e ${likesUsers[1]}`;
+      }
+      else if (likesCount === 1) {
+        string += `${likesUsers[0]}`;
+      }
+      else {
+        string += "Nenhum";
+      }
+    }
+
+    return string;
+  }
+
   return (
     <>
       {exclude ? (
@@ -199,7 +247,14 @@ export default function PostCard(props) {
           ) : (
             <IoHeartOutline className="likebutton" onClick={likePublishing} />
           )}
-          <p>{likesCount} likes</p>
+          <p
+            data-tip={tooltipString}
+            data-type="light"
+            data-place="bottom"
+            data-effect="solid">
+            {likesCount} likes
+          </p>
+          <ReactTooltip />
         </div>
         <div className="left-container">
           {idUser === user ? (
@@ -221,7 +276,7 @@ export default function PostCard(props) {
             <></>
           )}
 
-          <p className="username" onClick={ () => navigate(`/user/${idUser}`) }>{username}</p>
+          <p className="username" onClick={() => navigate(`/user/${idUser}`)}>{username}</p>
           <p className="description">
             {editing ? (
               <textarea
