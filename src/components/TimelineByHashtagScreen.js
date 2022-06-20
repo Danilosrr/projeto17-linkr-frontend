@@ -29,15 +29,17 @@ export default function TimelineByHashtagScreen() {
       } else {
         setToken({ ...localToken });
       }
+    } else {
+      requestGetPostsByHashtag();
     }
-
-    requestGetPostsByHashtag();
   }, [refreshScreen, token]);
 
   async function requestGetPostsByHashtag() {
     try {
+      const config = { headers: { Authorization: `Bearer ${token.token}` } };
       const response = await axios.get(
-        `http://localhost:4000/posts/${hashtag}`
+        `http://localhost:4000/posts/${hashtag}`, 
+        config
       );
       setFilteredPosts(response.data);
     } catch (e) {

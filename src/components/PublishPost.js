@@ -6,7 +6,7 @@ import UserContext from "../context/UserContext.js";
 export default function PublishPost(props) {
   let { setRefreshTimeline, refreshTimeline } = props;
 
-  const { token } = useContext(UserContext);
+  const { token, userImage } = useContext(UserContext);
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
   const [publishLoading, setPublishLoading] = useState(false);
@@ -47,33 +47,41 @@ export default function PublishPost(props) {
 
   return (
     <PublishPostContainer>
-      <label htmlFor="publishNewPost">What are you going to share today?</label>
-      <form id="publishNewPost" onSubmit={publishLoading ? () => {} : sendPost}>
-        <input
-          name="url"
-          type="url"
-          placeholder="http://..."
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          disabled={publishLoading}
-          required
-        />
-        <input
-          name="text"
-          type="text"
-          placeholder="Awesome article about #javascript"
-          id="postText"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          disabled={publishLoading}
-        />
-        <input
-          type="submit"
-          value={publishLoading ? "Publishing" : "Publish"}
-          id="postButton"
-          disabled={publishLoading}
-        />
-      </form>
+      <img className="user-image" src={userImage} alt="userImage" />
+      <FormContainer>
+        <label htmlFor="publishNewPost">
+          What are you going to share today?
+        </label>
+        <form
+          id="publishNewPost"
+          onSubmit={publishLoading ? () => {} : sendPost}
+        >
+          <input
+            name="url"
+            type="url"
+            placeholder="http://..."
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            disabled={publishLoading}
+            required
+          />
+          <input
+            name="text"
+            type="text"
+            placeholder="Awesome article about #javascript"
+            id="postText"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            disabled={publishLoading}
+          />
+          <input
+            type="submit"
+            value={publishLoading ? "Publishing" : "Publish"}
+            id="postButton"
+            disabled={publishLoading}
+          />
+        </form>
+      </FormContainer>
     </PublishPostContainer>
   );
 }
@@ -82,9 +90,6 @@ const PublishPostContainer = styled.section`
   width: 100%;
   height: 164px;
   padding: 10px 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   background-color: #ffffff;
   box-shadow: 0px 4px 4px 0px #00000040;
 
@@ -131,17 +136,23 @@ const PublishPostContainer = styled.section`
     text-align: center;
   }
 
+  .user-image {
+    display: none;
+  }
+
   @media (min-width: 600px) {
     width: 611px;
     height: 209px;
     border-radius: 16px;
     padding: 16px 22px 16px 18px;
+    display: flex;
 
     label {
       width: 100%;
       font-size: 20px;
       font-weight: 300;
       text-align: left;
+      margin-top: 5px;
     }
 
     input {
@@ -158,5 +169,22 @@ const PublishPostContainer = styled.section`
       font-size: 14px;
       line-height: 17px;
     }
+
+    .user-image {
+      display: block;
+      object-fit: cover;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      margin-right: 18px;
+    }
   }
+`;
+
+const FormContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
