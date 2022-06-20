@@ -11,6 +11,7 @@ import axios from "axios";
 export default function HeaderBar() {
   const { token, setToken, userImage, setUserImage } = useContext(UserContext);
   const [refresh, setRefresh] = useState({ token: "" });
+  const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
 
@@ -41,8 +42,14 @@ export default function HeaderBar() {
     }
   }, [refresh]);
 
+  const toLogout = async () => {
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("tokenUser");
+    navigate("/");
+  }
+
   return (
-    <Div>
+    <Div logout={logout}>
       <p onClick={() => navigate("/timeline")}>linkr</p>
 
       <div className="search-container-desktop">
@@ -52,11 +59,14 @@ export default function HeaderBar() {
       <div className="right-container">
         <IconContext.Provider value={{ color: "white", size: "2em" }}>
           <div>
-            <IoChevronDown className="arrow" />
+            <IoChevronDown onClick={() => { setLogout(!logout) }} className={"arrow " + (logout ? "arrow-down" : "arrow-up")} />
           </div>
         </IconContext.Provider>
 
         <img src={userImage} alt="User"></img>
+        {(logout ? <div className="logout-container">
+          <p onClick={() => { toLogout() }}>Logout</p>
+        </div> : <></>)}
       </div>
     </Div>
   );
@@ -100,12 +110,43 @@ const Div = styled.div`
 
   .arrow {
     font-size: 15px;
+    //transform: ${(props) => (props.logout ? "rotate(180deg)" : "")};
+  }
+
+  .arrow-up {
+    transform: rotate(0deg);
+    transition: transform 0.25s ease-out;
+  }
+
+  .arrow-down {
+    transform: rotate(180deg);
+    transition: transform 0.25s ease-out;
   }
 
   .right-container {
     display: flex;
     align-items: center;
     padding-bottom: 16px;
+    position: relative;
+
+    .logout-container {
+      position: absolute;
+      top: 60px;
+      right: -30px;
+      height: 47px;
+      width: 150px;
+      background-color: #171717;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 0 0 0 20px;
+
+      p {
+        font-size: 17px;
+        font-family: 'Lato';
+      }
+    }
   }
 
   @media (min-width: 600px) {
