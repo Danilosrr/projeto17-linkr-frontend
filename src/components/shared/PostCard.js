@@ -9,6 +9,7 @@ import ReactHashtag from "react-hashtag";
 import UserContext from "../../context/UserContext";
 import LoadingContext from "../../context/LoadingContext";
 import { useNavigate } from "react-router-dom";
+import ReactTooltip from 'react-tooltip'
 
 export default function PostCard(props) {
   const {
@@ -23,11 +24,14 @@ export default function PostCard(props) {
   } = props.post;
   const { token } = useContext(UserContext);
   const { loading, setLoading } = useContext(LoadingContext);
+  const [reset, setReset] = useState([]);
   const [likePost, setLikePost] = useState(false);
   const [editing, setEditing] = useState(false);
   const [descriptionEdit, setDescriptionEdit] = useState("");
   const [description, setDescription] = useState(props.post.description);
   const [likesCount, setLikesCount] = useState(0);
+  const [likesUsers, setLikesUsers] = useState([]);
+  const [tooltipString, setTooltipString] = useState("");
   const tokenJwt = !token.token
     ? JSON.parse(localStorage.getItem("tokenUser"))
     : token;
@@ -43,35 +47,44 @@ export default function PostCard(props) {
   const tokenObject = localStorage.getItem("tokenUser");
   const navigate = useNavigate();
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
-  // const URL = "http://localhost:4000/";
+  const URL2 = "http://localhost:4000/";
   const inputRef = useRef(null);
 
   useEffect(() => {
     checkLikePublishing();
     getLikesCount();
-  }, [loading]);
+  }, [reset]);
 
   function redirectToLink() {
     window.open(link, "_blank");
   }
 
-  function getLikesCount(){
+  function getLikesCount() {
     setLoading(true);
 
-    const promise = axios.post(`${URL}posts/likecount`, { idPost:id });
+    const promise = axios.post(`${URL2}posts/likecount`, { idPost: id }, {
+      headers: {
+        Authorization: `Bearer ${tokenJwt.token}`,
+      },
+    });
 
     promise.then((response) => {
-        setLikesCount(response.data); 
-        setLoading(false);
+      setLikesCount(Number(response.data.count));
+      setLikesUsers(response.data.users);
+      setLoading(false);
     });
     promise.catch((error) => {
-        console.log(error); setLoading(false);
+      console.log(error); setLoading(false);
     });
   };
 
+  useEffect(() => {
+    setTooltipString(toolString());
+  }, [likesUsers])
+
   function likePublishing() {
     console.log(props.post);
-    // setLoading(true);
+    setLoading(true);
     const promise = axios.post(
       `${URL}posts/like`,
       { idPost: id },
@@ -84,11 +97,12 @@ export default function PostCard(props) {
     promise.then((response) => {
       setLikePost(true);
       console.log(response);
-      setLoading(!loading);
+      setLoading(false);
+      setReset([]);
     });
     promise.catch((error) => {
       console.log(error);
-      setLoading(!loading);
+      setLoading(false);
     });
   }
 
@@ -155,6 +169,43 @@ export default function PostCard(props) {
     }
   }
 
+  const toolString = () => {
+    let string = "";
+
+    if (likePost) {
+      string += "Você";
+
+      if (likesCount === 4) {
+        string += `, ${likesUsers[0]} e outras ${likesCount - 2} pessoas`;
+      }
+      else if (likesCount === 3) {
+        string += `, ${likesUsers[0]} e outra 1 pessoa`;
+      }
+      else if (likesCount === 2) {
+        string += ` e ${likesUsers[0]}`;
+      }
+
+    } else {
+      if (likesCount > 3) {
+        string += `${likesUsers[0]}, ${likesUsers[1]} e outras ${likesCount - 2} pessoas`;
+      }
+      else if (likesCount === 3) {
+        string += `${likesUsers[0]}, ${likesUsers[1]} e outra 1 pessoa`;
+      }
+      else if (likesCount === 2) {
+        string += `${likesUsers[0]} e ${likesUsers[1]}`;
+      }
+      else if (likesCount === 1) {
+        string += `${likesUsers[0]}`;
+      }
+      else {
+        string += "Nenhum";
+      }
+    }
+
+    return string;
+  }
+
   return (
     <>
       {
@@ -172,13 +223,20 @@ export default function PostCard(props) {
       }
       <Div>
         <div className="right-container">
-          <img src={picture} alt={username}></img>
+          <img onClick={() => { console.log(likesUsers, id, likesCount) }} src={picture} alt={username}></img>
           {likePost ? (
             <IoHeart className="likebutton marked" onClick={likePublishing} />
           ) : (
             <IoHeartOutline className="likebutton" onClick={likePublishing} />
           )}
-            <p>{likesCount} likes</p>
+          <p
+            data-tip={tooltipString}
+            data-type="light"
+            data-place="bottom"
+            data-effect="solid">
+            {likesCount} likes
+          </p>
+          <ReactTooltip />
         </div>
         <div className="left-container">
           {(idUser === user ? <>
