@@ -57,7 +57,7 @@ export default function HeaderBar() {
 
 const Div = styled.div`
   background-color: #151515;
-  width: 100vw;
+  width: 100%;
   height: 72px;
   color: white;
   padding: 12px 14px 0 17px;
@@ -69,7 +69,6 @@ const Div = styled.div`
   top: 0;
   left: 0;
   z-index: 3;
-  /*FIXME: make it appears only on scroll-up*/
 
   p {
     font-family: "Passion One";
