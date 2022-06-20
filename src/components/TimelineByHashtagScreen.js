@@ -38,7 +38,7 @@ export default function TimelineByHashtagScreen() {
     try {
       const config = { headers: { Authorization: `Bearer ${token.token}` } };
       const response = await axios.get(
-        `http://localhost:4000/posts/${hashtag}`, 
+        `https://projeto17-linkr-cdio.herokuapp.com/${hashtag}`, 
         config
       );
       setFilteredPosts(response.data);
