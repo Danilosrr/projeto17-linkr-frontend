@@ -44,7 +44,13 @@ export default function SearchBar() {
         />
         {/* <input placeholder="Search for people and friends"></input> */}
         <div className="icon">
-          <AiOutlineSearch />
+          <AiOutlineSearch
+            onClick={() => {
+              if (searchResult.length > 0) {
+                navigate(`/user/${searchResult[0].id}`);
+              }
+            }}
+          />
         </div>
       </SearchBarDiv>
       {searchResult.length > 0 ? (
