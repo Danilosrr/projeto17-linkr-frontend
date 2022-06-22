@@ -20,6 +20,9 @@ export default function UserTimelineScreen() {
   const [refresh, setRefresh] = useState([]);
   const [user, setUser] = useState({});
   const [following, setFollowing] = useState(false);
+  const [refreshFollow, setRefreshFollow] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+
   let tokenObject = localStorage.getItem("tokenUser");
 
   const navigate = useNavigate();
@@ -45,12 +48,16 @@ export default function UserTimelineScreen() {
     // eslint-disable-next-line
   }, [refresh]);
 
+  useEffect(() => {
+    checkFollowing();
+  }, [refreshFollow]);
+
   async function request() {
     try {
-      const response = await axios.get(`${URL}user/${id}`);
       const config = {
         headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` },
       };
+      const response = await axios.get(`${URL}user/${id}`, config);
       const user = await axios.get(`${URL}userToken`, config);
       setPosts(response.data);
       setUser(user.data);
@@ -70,6 +77,24 @@ export default function UserTimelineScreen() {
     } catch (e) {
       setPosts(["error"]);
       console.log(e);
+    }
+  }
+
+  async function checkFollowing() {
+    try {
+      const response = await axios.get(`${URL}follow/${id}`, {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(tokenObject).token}`,
+        },
+      });
+
+      if (!response.data) {
+        setFollowing(false);
+      } else {
+        setFollowing(true);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -102,6 +127,44 @@ export default function UserTimelineScreen() {
     });
   }
 
+  function unFollow() {
+    setDisabled(true);
+    const promise = axios.delete(`${URL}follow/${id}`, {
+      headers: {
+        Authorization: `Bearer ${JSON.parse(tokenObject).token}`,
+      },
+    });
+    promise.then((response) => {
+      setDisabled(false);
+      setRefreshFollow(!refreshFollow);
+    });
+    promise.catch((error) => {
+      alert("It was not possible to execute this operation!");
+      setDisabled(false);
+    });
+  }
+
+  function follow() {
+    setDisabled(true);
+    const promise = axios.post(
+      `${URL}follow/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${JSON.parse(tokenObject).token}`,
+        },
+      }
+    );
+    promise.then((response) => {
+      setRefreshFollow(!refreshFollow);
+      setDisabled(false);
+    });
+    promise.catch((error) => {
+      alert("It was not possible to execute this operation!");
+      setDisabled(false);
+    });
+  }
+
   return posts[0] === "initial" ? (
     <Div>
       <HeaderBar />
@@ -124,12 +187,32 @@ export default function UserTimelineScreen() {
         <SearchBar />
       </div>
       <div className="page-title">
-        <img src={posts[0].picture} alt="user" />
-        <h1>{posts ? posts[0].username : "User"} posts</h1>
+        <div className="user-page">
+          <img src={posts[0].picture} alt="user" />
+          <h1>{posts ? posts[0].username : "User"} posts</h1>
+        </div>
         {following ? (
-          <button className="following">Unfollow</button>
+          <button
+            className={`following ${parseInt(id) === user.id ? "hide" : ""}`}
+            onClick={() => {
+              unFollow();
+            }}
+            disabled={disabled}
+          >
+            Unfollow
+          </button>
         ) : (
-          <button className="not-following">Follow</button>
+          <button
+            className={`not-following ${
+              parseInt(id) === user.id ? "hide" : ""
+            }`}
+            onClick={() => {
+              follow();
+            }}
+            disabled={disabled}
+          >
+            Follow
+          </button>
         )}
       </div>
       <div className="timeline-screen-container">
@@ -155,6 +238,11 @@ const Div = styled.div`
     align-items: center;
   }
 
+  .user-page {
+    display: flex;
+    align-items: center;
+  }
+
   .search-container-mobile {
     margin-top: 82px;
     display: flex;
@@ -168,6 +256,7 @@ const Div = styled.div`
   .page-title {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin: 19px 0 19px 18px;
 
     img {
@@ -189,6 +278,10 @@ const Div = styled.div`
       border-radius: 5px;
       margin-left: 18px;
       font-weight: 700;
+
+      &:disabled {
+        opacity: 0.6;
+      }
     }
 
     .following {
@@ -203,6 +296,14 @@ const Div = styled.div`
       border-radius: 5px;
       margin-left: 18px;
       font-weight: 700;
+
+      &:disabled {
+        opacity: 0.6;
+      }
+    }
+
+    .hide {
+      display: none;
     }
   }
 
@@ -236,12 +337,14 @@ const Div = styled.div`
   }
 
   @media (min-width: 600px) {
+    max-width: 937px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: 0 auto;
 
     .page-title {
-      width: 937px;
+      width: 100%;
       margin: 0 auto;
       margin: calc(78px + 72px) 0 43px;
 
@@ -254,12 +357,12 @@ const Div = styled.div`
         width: 112px;
         font-size: 14px;
         line-height: 17px;
-        margin-left: 200px;
+        /* margin-left: 200px; */
       }
     }
 
     h1 {
-      width: 611px;
+      width: 100%;
       font-size: 43px;
       line-height: 64px;
     }
