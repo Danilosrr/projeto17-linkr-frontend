@@ -19,6 +19,7 @@ export default function UserTimelineScreen() {
   const { token, setToken } = useContext(UserContext);
   const [refresh, setRefresh] = useState([]);
   const [user, setUser] = useState({});
+  const [pageUser, setPageUser] = useState({});
   const [following, setFollowing] = useState(false);
   const [refreshFollow, setRefreshFollow] = useState(false);
   const [disabled, setDisabled] = useState(false);
@@ -59,6 +60,11 @@ export default function UserTimelineScreen() {
       };
       const response = await axios.get(`${URL}user/${id}`, config);
       const user = await axios.get(`${URL}userToken`, config);
+      const pageUserResult = await axios.get(
+        `${URL}users/${id}`,
+        config
+      );
+      setPageUser(pageUserResult.data);
       setPosts(response.data);
       setUser(user.data);
     } catch (e) {
@@ -170,7 +176,7 @@ export default function UserTimelineScreen() {
       <HeaderBar />
       <div className="timeline-screen-container">
         <div className="timeline-container">
-          <h1>{posts ? posts[0].username : "User"} posts</h1>
+          <h1>{pageUser ? pageUser.username : "User"} posts</h1>
           <div className="message-container">
             <p className="message">Loading . . .</p>
           </div>
@@ -188,8 +194,8 @@ export default function UserTimelineScreen() {
       </div>
       <div className="page-title">
         <div className="user-page">
-          <img src={posts[0].picture} alt="user" />
-          <h1>{posts ? posts[0].username : "User"} posts</h1>
+          <img src={pageUser.picture} alt="user" />
+          <h1>{pageUser ? pageUser.username : "User"} posts</h1>
         </div>
         {following ? (
           <button
@@ -264,6 +270,7 @@ const Div = styled.div`
       height: 50px;
       border-radius: 50%;
       margin-right: 15px;
+      object-fit: cover;
     }
 
     .not-following {
