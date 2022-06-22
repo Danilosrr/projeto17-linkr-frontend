@@ -15,7 +15,7 @@ export default function SearchBar() {
 
   const navigate = useNavigate();
 
-  const URL = "http://localhost:4000/";
+  const URL = "projeto17-linkr-cdio.herokuapp.com/";
 
   useEffect(() => {
     if (!!search) {

@@ -9,11 +9,12 @@ import SearchBar from "./SearchBar.js";
 import axios from "axios";
 
 export default function HeaderBar() {
-  const { token, setToken, userImage, setUserImage } = useContext(UserContext);
+  const { token, setToken, userImage, setUserImage, setUsername } =
+    useContext(UserContext);
   const [refresh, setRefresh] = useState({ token: "" });
   const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
-  const URL = "http://localhost:4000/";
+  const URL = "projeto17-linkr-cdio.herokuapp.com/";
 
   const localToken = JSON.parse(localStorage.getItem("tokenUser"));
 
@@ -34,9 +35,11 @@ export default function HeaderBar() {
       });
       promise.then(({ data }) => {
         setUserImage(data.picture);
+        setUsername(data.username);
       });
       promise.catch((error) => {
         console.log(error.response.data);
+        localStorage.removeItem("tokenUser");
         navigate("/");
       });
     }
@@ -46,7 +49,7 @@ export default function HeaderBar() {
     localStorage.removeItem("userInfo");
     localStorage.removeItem("tokenUser");
     navigate("/");
-  }
+  };
 
   return (
     <Div logout={logout}>
@@ -59,14 +62,29 @@ export default function HeaderBar() {
       <div className="right-container">
         <IconContext.Provider value={{ color: "white", size: "2em" }}>
           <div>
-            <IoChevronDown onClick={() => { setLogout(!logout) }} className={"arrow " + (logout ? "arrow-down" : "arrow-up")} />
+            <IoChevronDown
+              onClick={() => {
+                setLogout(!logout);
+              }}
+              className={"arrow " + (logout ? "arrow-down" : "arrow-up")}
+            />
           </div>
         </IconContext.Provider>
 
         <img src={userImage} alt="User"></img>
-        {(logout ? <div className="logout-container">
-          <p onClick={() => { toLogout() }}>Logout</p>
-        </div> : <></>)}
+        {logout ? (
+          <div className="logout-container">
+            <p
+              onClick={() => {
+                toLogout();
+              }}
+            >
+              Logout
+            </p>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </Div>
   );
@@ -144,7 +162,7 @@ const Div = styled.div`
 
       p {
         font-size: 17px;
-        font-family: 'Lato';
+        font-family: "Lato";
       }
     }
   }
