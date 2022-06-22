@@ -17,7 +17,6 @@ export default function TimelineScreen() {
     const { token, setToken } = useContext(UserContext);
     const [refresh, setRefresh] = useState([]);
     const [user, setUser] = useState({});
-    let tokenObject = localStorage.getItem("tokenUser");
 
     const navigate = useNavigate();
 
