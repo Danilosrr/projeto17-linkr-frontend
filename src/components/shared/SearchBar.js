@@ -15,7 +15,7 @@ export default function SearchBar() {
 
   const navigate = useNavigate();
 
-  const URL = "projeto17-linkr-cdio.herokuapp.com/";
+  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
 
   useEffect(() => {
     if (!!search) {

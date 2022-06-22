@@ -20,7 +20,7 @@ export default function TimelineScreen() {
 
     const navigate = useNavigate();
 
-    const URL = "projeto17-linkr-cdio.herokuapp.com/";
+    const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
     const localToken = JSON.parse(localStorage.getItem("tokenUser"));
 
     useEffect(() => {
