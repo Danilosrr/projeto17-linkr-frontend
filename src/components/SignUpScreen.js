@@ -17,7 +17,7 @@ export default function SignUpScreen() {
 
   const navigate = useNavigate();
 
-  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+  const URL = "http://localhost:4000/";
 
   function updateUserInfo(event) {
     const { name, value } = event.target;

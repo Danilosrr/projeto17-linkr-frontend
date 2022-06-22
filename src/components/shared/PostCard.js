@@ -9,6 +9,7 @@ import ReactHashtag from "react-hashtag";
 import UserContext from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import ReactTooltip from 'react-tooltip'
+import CommentSection from "./Comments";
 
 export default function PostCard(props) {
   const {
@@ -47,7 +48,7 @@ export default function PostCard(props) {
   );
   const tokenObject = localStorage.getItem("tokenUser");
   const navigate = useNavigate();
-  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+  const URL = "http://localhost:4000/";
 
   const inputRef = useRef(null);
 
@@ -310,6 +311,7 @@ export default function PostCard(props) {
           </div>
         </div>
       </Div>
+      <CommentSection post={props.post} user={user}/>
     </>
   );
 

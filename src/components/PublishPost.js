@@ -14,7 +14,7 @@ export default function PublishPost(props) {
   const tokenJwt = !token.token
     ? JSON.parse(localStorage.getItem("tokenUser"))
     : token;
-  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+  const URL = "http://localhost:4000/";
 
   function sendPost(event) {
     event.preventDefault();

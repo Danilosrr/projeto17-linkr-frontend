@@ -21,7 +21,7 @@ export default function TimelineScreen() {
 
     const navigate = useNavigate();
 
-    const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+    const URL = "http://localhost:4000/";
     const localToken = JSON.parse(localStorage.getItem("tokenUser"));
 
     useEffect(() => {
@@ -179,7 +179,7 @@ export default function TimelineScreen() {
 }
 
 const Div = styled.div`
-  
+  overflow-x: hidden;
 
   .timeline-screen-container {
       margin: 0 auto;

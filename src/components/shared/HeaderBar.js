@@ -13,7 +13,7 @@ export default function HeaderBar() {
   const [refresh, setRefresh] = useState({ token: "" });
   const [logout, setLogout] = useState(false);
   const navigate = useNavigate();
-  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+  const URL = "http://localhost:4000/";
 
   const localToken = JSON.parse(localStorage.getItem("tokenUser"));
 

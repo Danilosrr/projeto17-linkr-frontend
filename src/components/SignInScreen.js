@@ -19,7 +19,7 @@ export default function SignInScreen() {
 
   const navigate = useNavigate();
 
-  const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+  const URL = "http://localhost:4000/";
 
   useEffect(() => {
     if (tokenObject) {

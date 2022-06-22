@@ -25,7 +25,7 @@ export default function TrendingHashtags() {
         // eslint-disable-next-line
     }, []);
 
-    const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
+    const URL = "http://localhost:4000/";
 
     async function getTrendingHashtags() {
         try {
