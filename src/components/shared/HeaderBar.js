@@ -37,6 +37,7 @@ export default function HeaderBar() {
       });
       promise.catch((error) => {
         console.log(error.response.data);
+        localStorage.removeItem("tokenUser");
         navigate("/");
       });
     }
