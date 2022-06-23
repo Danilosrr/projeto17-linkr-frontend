@@ -57,7 +57,13 @@ export default function SearchBar() {
         <ResultContainer>
           {searchResult.map((result, index) => {
             return (
-              <li key={index} onClick={() => navigate(`/user/${result.id}`)}>
+              <li
+                key={index}
+                onClick={() => {
+                  setSearchResult([]);
+                  navigate(`/user/${result.id}`);
+                }}
+              >
                 <img src={result.picture} alt="user" />
                 <p>{result.username}</p>
                 {result.follow ? (
