@@ -60,6 +60,11 @@ export default function SearchBar() {
               <li key={index} onClick={() => navigate(`/user/${result.id}`)}>
                 <img src={result.picture} alt="user" />
                 <p>{result.username}</p>
+                {result.follow ? (
+                  <p className="following">&#8226; following</p>
+                ) : (
+                  <></>
+                )}
               </li>
             );
           })}
@@ -97,6 +102,11 @@ const ResultContainer = styled.ul`
       font-size: 19px;
       line-height: 23px;
       color: #515151;
+    }
+
+    .following {
+      color: #c5c5c5;
+      margin-left: 7px;
     }
   }
 
