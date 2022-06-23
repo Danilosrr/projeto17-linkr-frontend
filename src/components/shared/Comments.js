@@ -109,7 +109,6 @@ const Comments = styled.section`
     object-fit: cover;
   }
   .commentContent {
-    background-color: blue;
     margin-left: 18px;
     width: 100%;
     word-break: break-word;
