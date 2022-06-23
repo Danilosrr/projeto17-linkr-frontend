@@ -160,6 +160,8 @@ export default function TimelineScreen() {
 }
 
 const Div = styled.div`
+  overflow-x: hidden;
+
   .timeline-screen-container {
     margin: 0 auto;
     display: flex;

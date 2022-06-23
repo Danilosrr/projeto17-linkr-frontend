@@ -4,11 +4,12 @@ import styled from "styled-components";
 import { FaTrash } from "react-icons/fa";
 import { TiPencil } from "react-icons/ti";
 import { ThreeDots } from "react-loader-spinner";
-import { IoHeartOutline, IoHeart } from "react-icons/io5";
+import { IoHeartOutline, IoHeart, IoChatbubblesOutline } from "react-icons/io5";
 import ReactHashtag from "react-hashtag";
 import UserContext from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import ReactTooltip from 'react-tooltip'
+import CommentSection from "./Comments";
 
 export default function PostCard(props) {
   const {
@@ -29,8 +30,10 @@ export default function PostCard(props) {
   const [descriptionEdit, setDescriptionEdit] = useState("");
   const [description, setDescription] = useState(props.post.description);
   const [likesCount, setLikesCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0);
   const [likesUsers, setLikesUsers] = useState([]);
   const [tooltipString, setTooltipString] = useState("");
+  const [commentBar, setCommentBar] = useState(false);
   const tokenJwt = !token.token
     ? JSON.parse(localStorage.getItem("tokenUser"))
     : token;
@@ -54,6 +57,7 @@ export default function PostCard(props) {
   useEffect(() => {
     checkLikePublishing();
     getLikesCount();
+    getCommentCount();
   }, [reset]);
 
   function redirectToLink() {
@@ -73,6 +77,18 @@ export default function PostCard(props) {
     promise.catch((error) => {
       console.log(error);
       setLoading(false);
+    });
+  }
+
+  function getCommentCount() {
+    const config = { headers: { Authorization: `Bearer ${tokenJwt.token}` } };
+    const promise = axios.get(`${URL}posts/commentcount/${id}`, config);
+
+    promise.then((response) => {
+      setCommentCount(Number(response.data));
+    });
+    promise.catch((error) => {
+      console.log(error);
     });
   }
 
@@ -254,6 +270,8 @@ export default function PostCard(props) {
             data-effect="solid">
             {likesCount} likes
           </p>
+          <IoChatbubblesOutline className="chatbutton" onClick={()=>{setCommentBar(!commentBar)}}/>
+          <p>{commentCount > 0 ? commentCount+' comments' :''}</p>
           <ReactTooltip />
         </div>
         <div className="left-container">
@@ -310,6 +328,10 @@ export default function PostCard(props) {
           </div>
         </div>
       </Div>
+      { commentBar ? 
+        <CommentSection post={props.post} setReset={setReset}/>
+        : <></> 
+      }
     </>
   );
 
@@ -413,7 +435,11 @@ const Div = styled.div`
   display: flex;
   /* justify-content: space-between; */
 
-  .likebutton {
+  .hide {
+    display: none;
+  }
+
+  .likebutton, .chatbutton {
     width: 100%;
     margin-top: 10px;
     align-items: center;
