@@ -40,6 +40,7 @@ export default function SearchBar() {
             setSearch(event.target.value);
             setRefresh(!refresh);
           }}
+          value={search}
           placeholder="Search for people and friends"
         />
         {/* <input placeholder="Search for people and friends"></input> */}
@@ -61,6 +62,7 @@ export default function SearchBar() {
                 key={index}
                 onClick={() => {
                   setSearchResult([]);
+                  setSearch("");
                   navigate(`/user/${result.id}`);
                 }}
               >

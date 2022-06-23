@@ -33,13 +33,13 @@ export default function TimelineByHashtagScreen() {
     } else {
       requestGetPostsByHashtag();
     }
-  }, [refreshScreen, token]);
+  }, [refreshScreen, token, hashtag]);
 
   async function requestGetPostsByHashtag() {
     try {
       const config = { headers: { Authorization: `Bearer ${token.token}` } };
       const response = await axios.get(
-        `https://projeto17-linkr-cdio.herokuapp.com/posts/${hashtag}`, 
+        `https://projeto17-linkr-cdio.herokuapp.com/posts/${hashtag}`,
         config
       );
       setFilteredPosts(response.data);
@@ -108,12 +108,11 @@ export default function TimelineByHashtagScreen() {
 }
 
 const Div = styled.div`
-
   .timeline-screen-container {
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      max-width: 100vw;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    max-width: 100vw;
   }
 
   h1 {
@@ -147,7 +146,7 @@ const Div = styled.div`
   }
 
   .trending-hashtags-container {
-      display: none;
+    display: none;
   }
 
   @media (min-width: 600px) {
@@ -168,9 +167,9 @@ const Div = styled.div`
     }
 
     .trending-hashtags-container {
-        display: block;
-        margin-left: 25px;
-        margin-top: 255px;
+      display: block;
+      margin-left: 25px;
+      margin-top: 255px;
     }
   }
 `;
