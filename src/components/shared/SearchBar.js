@@ -19,14 +19,11 @@ export default function SearchBar() {
 
   useEffect(() => {
     if (!!search) {
-      const promise = axios.get(
-        `http://localhost:4000/users/search?user=${search}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token.token}`,
-          },
-        }
-      );
+      const promise = axios.get(`${URL}users/search?user=${search}`, {
+        headers: {
+          Authorization: `Bearer ${token.token}`,
+        },
+      });
       promise.then((response) => setSearchResult(response.data));
       promise.catch((error) => console.log(error.response.data));
     }
