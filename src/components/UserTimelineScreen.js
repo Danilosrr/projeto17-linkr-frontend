@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import axios from "axios";
+import useInterval from "use-interval";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -35,18 +36,26 @@ export default function UserTimelineScreen() {
     if (!token.token) {
       if (!localToken) {
         navigate("/");
-        console.log("teste");
       } else {
         setToken({ ...localToken });
       }
     }
     requestGetUserPosts();
   }, [refreshTimeline]);
-  // eslint-disable-next-line
+
+  useInterval(() => {
+    if (!token.token) {
+      if (!localToken) {
+        navigate("/");
+      } else {
+        setToken({ ...localToken });
+      }
+    }
+    requestGetUserPosts();
+  }, 15000);
 
   useEffect(() => {
     request();
-    // eslint-disable-next-line
   }, [refresh]);
 
   useEffect(() => {

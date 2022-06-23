@@ -2,6 +2,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import useInterval from "use-interval";
 
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
@@ -26,7 +27,6 @@ export default function TimelineByHashtagScreen() {
     if (!token.token) {
       if (!localToken) {
         navigate("/");
-        console.log("teste");
       } else {
         setToken({ ...localToken });
       }
@@ -34,6 +34,18 @@ export default function TimelineByHashtagScreen() {
       requestGetPostsByHashtag();
     }
   }, [refreshScreen, token]);
+
+  useInterval(() => {
+    if (!token.token) {
+      if (!localToken) {
+        navigate("/");
+      } else {
+        setToken({ ...localToken });
+      }
+    } else {
+      requestGetPostsByHashtag();
+    }
+  }, 15000);
 
   async function requestGetPostsByHashtag() {
     try {
