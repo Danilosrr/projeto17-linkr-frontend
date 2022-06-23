@@ -40,6 +40,7 @@ export default function SearchBar() {
             setSearch(event.target.value);
             setRefresh(!refresh);
           }}
+          value={search}
           placeholder="Search for people and friends"
         />
         {/* <input placeholder="Search for people and friends"></input> */}
@@ -57,7 +58,14 @@ export default function SearchBar() {
         <ResultContainer>
           {searchResult.map((result, index) => {
             return (
-              <li key={index} onClick={() => navigate(`/user/${result.id}`)}>
+              <li
+                key={index}
+                onClick={() => {
+                  setSearchResult([]);
+                  setSearch("");
+                  navigate(`/user/${result.id}`);
+                }}
+              >
                 <img src={result.picture} alt="user" />
                 <p>{result.username}</p>
                 {result.follow ? (
