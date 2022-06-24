@@ -8,7 +8,7 @@ import { IoHeartOutline, IoHeart, IoChatbubblesOutline } from "react-icons/io5";
 import ReactHashtag from "react-hashtag";
 import UserContext from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
-import ReactTooltip from 'react-tooltip'
+import ReactTooltip from "react-tooltip";
 import CommentSection from "./Comments";
 
 export default function PostCard(props) {
@@ -56,7 +56,7 @@ export default function PostCard(props) {
   const navigate = useNavigate();
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
   const inputRef = useRef(null);
-  const idOriginal = (idPost ? idPost : id);
+  const idOriginal = idPost ? idPost : id;
 
   useEffect(() => {
     checkLikePublishing();
@@ -100,21 +100,24 @@ export default function PostCard(props) {
   const getShareCount = async () => {
     try {
       const config = { headers: { Authorization: `Bearer ${tokenJwt.token}` } };
-      const promise = await axios.get(`${URL}posts/sharecount/${idOriginal}`, config);
+      const promise = await axios.get(
+        `${URL}posts/sharecount/${idOriginal}`,
+        config
+      );
 
       setShareCount(promise.data.count);
       setUserRetweet(promise.data.user);
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   useEffect(() => {
     setTooltipString(toolString());
-  }, [likesUsers])
+  }, [likesUsers]);
 
   function likePublishing() {
-    console.log(props.post);
+    // console.log(props.post);
     setLoading(true);
     const promise = axios.post(
       `${URL}posts/like`,
@@ -127,7 +130,7 @@ export default function PostCard(props) {
     );
     promise.then((response) => {
       setLikePost(true);
-      console.log(response);
+      // console.log(response);
       setLoading(false);
       setReset([]);
     });
@@ -215,39 +218,36 @@ export default function PostCard(props) {
 
       if (likesCount === 4) {
         string += `, ${likesUsers[0]} e outras ${likesCount - 2} pessoas`;
-      }
-      else if (likesCount === 3) {
+      } else if (likesCount === 3) {
         string += `, ${likesUsers[0]} e outra 1 pessoa`;
-      }
-      else if (likesCount === 2) {
+      } else if (likesCount === 2) {
         string += ` e ${likesUsers[0]}`;
       }
-
     } else {
       if (likesCount > 3) {
-        string += `${likesUsers[0]}, ${likesUsers[1]} e outras ${likesCount - 2} pessoas`;
-      }
-      else if (likesCount === 3) {
+        string += `${likesUsers[0]}, ${likesUsers[1]} e outras ${
+          likesCount - 2
+        } pessoas`;
+      } else if (likesCount === 3) {
         string += `${likesUsers[0]}, ${likesUsers[1]} e outra 1 pessoa`;
-      }
-      else if (likesCount === 2) {
+      } else if (likesCount === 2) {
         string += `${likesUsers[0]} e ${likesUsers[1]}`;
-      }
-      else if (likesCount === 1) {
+      } else if (likesCount === 1) {
         string += `${likesUsers[0]}`;
-      }
-      else {
+      } else {
         string += "Nenhum";
       }
     }
 
     return string;
-  }
+  };
 
   const retweetPost = async () => {
     setLoading(true);
     try {
-      const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
+      const config = {
+        headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` },
+      };
       await axios.post(`${URL}posts/share`, { idPost: id }, config);
       setReset([]);
       setSharing(false);
@@ -257,7 +257,7 @@ export default function PostCard(props) {
       alert("Não foi possível retweetar o post!");
     }
     setLoading(false);
-  }
+  };
 
   return (
     <>
@@ -306,60 +306,79 @@ export default function PostCard(props) {
         <></>
       )}
       <Div retweet={idPost}>
-        {(idPost ?
+        {idPost ? (
           <div className="share-container">
             <FaRetweet className="mini-retweet-icon" />
             Re-posted by
-            <p>{userRetweet.username}</p>
-          </div> : <></>
+            <p>{username}</p>
+          </div>
+        ) : (
+          <></>
         )}
 
         <div className="post-container">
           <div className="right-container">
             <img
-              src={picture}
-              alt={username}
-              onClick={() => navigate(`/user/${idUser}`)}
+              src={idPost ? userRetweet.picture : picture}
+              alt={idPost ? userRetweet.username : username}
+              onClick={() =>
+                navigate(`/user/${idPost ? userRetweet.id : idUser}`)
+              }
             ></img>
             {likePost ? (
               <IoHeart className="likebutton marked" onClick={likePublishing} />
             ) : (
-              <IoHeartOutline className="likebutton" onClick={() => {
-                if (!idPost) {
-                  likePublishing()
-                }
-              }} />
+              <IoHeartOutline
+                className="likebutton"
+                onClick={() => {
+                  if (!idPost) {
+                    likePublishing();
+                  }
+                }}
+              />
             )}
             <p
               data-tip={tooltipString}
               data-type="light"
               data-place="bottom"
-              data-effect="solid">
+              data-effect="solid"
+            >
               {likesCount} likes
             </p>
-            <IoChatbubblesOutline className="chatbutton" onClick={() => {
-              if (!idPost) {
-                setCommentBar(!commentBar)
-              }
-            }} />
+            <IoChatbubblesOutline
+              className="chatbutton"
+              onClick={() => {
+                if (!idPost) {
+                  setCommentBar(!commentBar);
+                }
+              }}
+            />
             <p>{`${commentCount} comments`}</p>
-            <FaRetweet className="share-icon" onClick={() => {
-              if (!idPost) {
-                setSharing(true);
-              }
-            }} />
+            <FaRetweet
+              className="share-icon"
+              onClick={() => {
+                if (!idPost) {
+                  setSharing(true);
+                }
+              }}
+            />
             <p>{`${shareCount} shares`}</p>
             <ReactTooltip />
           </div>
           <div className="left-container">
             {idUser === user ? (
               <>
-                <TiPencil
-                  className="pencil-icon"
-                  onClick={() => {
-                    editing ? cancelEdit() : openEdit();
-                  }}
-                />
+                {idPost ? (
+                  <></>
+                ) : (
+                  <TiPencil
+                    className="pencil-icon"
+                    onClick={() => {
+                      editing ? cancelEdit() : openEdit();
+                    }}
+                  />
+                )}
+
                 <FaTrash
                   className="trash-icon"
                   onClick={() => {
@@ -371,7 +390,14 @@ export default function PostCard(props) {
               <></>
             )}
 
-            <p className="username" onClick={() => navigate(`/user/${idUser}`)}>{username}</p>
+            <p
+              className="username"
+              onClick={() =>
+                navigate(`/user/${idPost ? userRetweet.id : idUser}`)
+              }
+            >
+              {idPost ? userRetweet.username : username}
+            </p>
             <p className="description">
               {editing ? (
                 <textarea
@@ -406,10 +432,11 @@ export default function PostCard(props) {
           </div>
         </div>
       </Div>
-      {commentBar ?
+      {commentBar ? (
         <CommentSection post={props.post} setReset={setReset} />
-        : <></>
-      }
+      ) : (
+        <></>
+      )}
     </>
   );
 
@@ -517,7 +544,8 @@ const Div = styled.div`
     display: none;
   }
 
-  .likebutton, .chatbutton {
+  .likebutton,
+  .chatbutton {
     width: 100%;
     margin-top: 10px;
     align-items: center;
@@ -532,7 +560,7 @@ const Div = styled.div`
   .share-container {
     height: 33px;
     width: 100%;
-    background-color: #1E1E1E;
+    background-color: #1e1e1e;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
