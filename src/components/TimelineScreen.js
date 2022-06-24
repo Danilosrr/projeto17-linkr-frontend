@@ -117,8 +117,8 @@ export default function TimelineScreen() {
 
         const lastPostId = posts[0].id;
 
-        //const newPosts = await axios.get(`${URL}posts/new/${lastPostId}`, config);
-        const newPosts = await axios.get(`http://localhost:4000/posts/new/${lastPostId}`, config);
+        const newPosts = await axios.get(`${URL}posts/new/${lastPostId}`, config);
+        //const newPosts = await axios.get(`http://localhost:4000/posts/new/${lastPostId}`, config);
 
         if (newPosts.data.length > 0) {
           setNewPosts(newPosts.data);
