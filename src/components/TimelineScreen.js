@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import axios from "axios";
-import InfiniteScroll from 'react-infinite-scroller';
-import { TailSpin } from 'react-loader-spinner'
+import InfiniteScroll from "react-infinite-scroller";
+import { TailSpin } from "react-loader-spinner";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useInterval from "use-interval";
@@ -25,6 +25,7 @@ export default function TimelineScreen() {
   const [user, setUser] = useState({});
   const [followSomeone, setFollowSomeone] = useState(false);
   const [page, setPage] = useState(1);
+  const [loadMore, setLoadMore] = useState(true);
 
   const navigate = useNavigate();
 
@@ -95,8 +96,10 @@ export default function TimelineScreen() {
         setPosts([...posts, ...response.data]);
       }
 
+      if (response.data.length === 0) {
+        setLoadMore(false);
+      }
       setPage(page + 1);
-
     } catch (e) {
       setPosts(["error"]);
       console.log(e, "requestGetPosts");
@@ -117,7 +120,10 @@ export default function TimelineScreen() {
 
         const lastPostId = posts[0].id;
 
-        const newPosts = await axios.get(`${URL}posts/new/${lastPostId}`, config);
+        const newPosts = await axios.get(
+          `${URL}posts/new/${lastPostId}`,
+          config
+        );
         //const newPosts = await axios.get(`http://localhost:4000/posts/new/${lastPostId}`, config);
 
         if (newPosts.data.length > 0) {
@@ -147,7 +153,6 @@ export default function TimelineScreen() {
     }
   }
 
-
   function renderPosts(posts) {
     if (posts.length === 0) {
       return (
@@ -175,7 +180,6 @@ export default function TimelineScreen() {
     }
 
     return posts.map((post, index) => {
-      //const { id } = post;
 
       return (
         <PostCard key={index} post={post} user={user.id} refresh={setRefresh} />
@@ -223,24 +227,26 @@ export default function TimelineScreen() {
 
           {renderAlertNewPosts(qtyNewPosts)}
 
-
           <div className="infite-scroll-container">
             <InfiniteScroll
               pageStart={0}
               loadMore={requestGetPosts}
-              hasMore={true || false}
+              hasMore={loadMore}
               loader={
                 <div className="loader" key={page}>
-                  <TailSpin ariaLabel="loading-indicator" height="50" width="50" color='grey' />
+                  <TailSpin
+                    ariaLabel="loading-indicator"
+                    height="50"
+                    width="50"
+                    color="grey"
+                  />
                   <p className="loader-text">Loading more posts...</p>
-                </div>}
+                </div>
+              }
             >
               {renderPosts(posts)}
-
             </InfiniteScroll>
           </div>
-
-
         </div>
         <div className="trending-virtual-container">
           <div className="trending-container">
@@ -335,11 +341,11 @@ const Div = styled.div`
 
   .loader-text {
     margin-top: 10px;
-    font-family: 'Lato';
+    font-family: "Lato";
     font-size: 22px;
     line-height: 26px;
     letter-spacing: 0.05em;
-    color: #6D6D6D;
+    color: #6d6d6d;
   }
 
   @media (min-width: 600px) {

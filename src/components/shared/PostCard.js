@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaRetweet } from "react-icons/fa";
 import { TiPencil } from "react-icons/ti";
 import { ThreeDots } from "react-loader-spinner";
 import { IoHeartOutline, IoHeart, IoChatbubblesOutline } from "react-icons/io5";
@@ -20,17 +20,21 @@ export default function PostCard(props) {
     imageLink,
     descriptionLink,
     id,
+    idPost,
     idUser,
   } = props.post;
   const { token } = useContext(UserContext);
-  const [reset, setReset] = useState([]); 
+  const [reset, setReset] = useState([]);
   const [loading, setLoading] = useState(false);
   const [likePost, setLikePost] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const [descriptionEdit, setDescriptionEdit] = useState("");
   const [description, setDescription] = useState(props.post.description);
   const [likesCount, setLikesCount] = useState(0);
   const [commentCount, setCommentCount] = useState(0);
+  const [shareCount, setShareCount] = useState(0);
+  const [userRetweet, setUserRetweet] = useState({ id: 0, username: "" });
   const [likesUsers, setLikesUsers] = useState([]);
   const [tooltipString, setTooltipString] = useState("");
   const [commentBar, setCommentBar] = useState(false);
@@ -51,13 +55,14 @@ export default function PostCard(props) {
   const tokenObject = localStorage.getItem("tokenUser");
   const navigate = useNavigate();
   const URL = "https://projeto17-linkr-cdio.herokuapp.com/";
-
   const inputRef = useRef(null);
+  const idOriginal = (idPost ? idPost : id);
 
   useEffect(() => {
     checkLikePublishing();
     getLikesCount();
     getCommentCount();
+    getShareCount();
   }, [reset]);
 
   function redirectToLink() {
@@ -67,7 +72,7 @@ export default function PostCard(props) {
   function getLikesCount() {
     setLoading(true);
     const config = { headers: { Authorization: `Bearer ${tokenJwt.token}` } };
-    const promise = axios.get(`${URL}posts/likecount/${id}`, config);
+    const promise = axios.get(`${URL}posts/likecount/${idOriginal}`, config);
 
     promise.then((response) => {
       setLikesCount(Number(response.data.count));
@@ -82,7 +87,7 @@ export default function PostCard(props) {
 
   function getCommentCount() {
     const config = { headers: { Authorization: `Bearer ${tokenJwt.token}` } };
-    const promise = axios.get(`${URL}posts/commentcount/${id}`, config);
+    const promise = axios.get(`${URL}posts/commentcount/${idOriginal}`, config);
 
     promise.then((response) => {
       setCommentCount(Number(response.data));
@@ -90,6 +95,18 @@ export default function PostCard(props) {
     promise.catch((error) => {
       console.log(error);
     });
+  }
+
+  const getShareCount = async () => {
+    try {
+      const config = { headers: { Authorization: `Bearer ${tokenJwt.token}` } };
+      const promise = await axios.get(`${URL}posts/sharecount/${idOriginal}`, config);
+
+      setShareCount(promise.data.count);
+      setUserRetweet(promise.data.user);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   useEffect(() => {
@@ -227,6 +244,21 @@ export default function PostCard(props) {
     return string;
   }
 
+  const retweetPost = async () => {
+    setLoading(true);
+    try {
+      const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
+      await axios.post(`${URL}posts/share`, { idPost: id }, config);
+      setReset([]);
+      setSharing(false);
+    } catch (e) {
+      console.log(e.message);
+      setSharing(false);
+      alert("Não foi possível retweetar o post!");
+    }
+    setLoading(false);
+  }
+
   return (
     <>
       {exclude ? (
@@ -251,86 +283,132 @@ export default function PostCard(props) {
       ) : (
         <></>
       )}
-      <Div>
-        <div className="right-container">
-          <img
-            src={picture}
-            alt={username}
-            onClick={() => navigate(`/user/${idUser}`)}
-          ></img>
-          {likePost ? (
-            <IoHeart className="likebutton marked" onClick={likePublishing} />
-          ) : (
-            <IoHeartOutline className="likebutton" onClick={likePublishing} />
-          )}
-          <p
-            data-tip={tooltipString}
-            data-type="light"
-            data-place="bottom"
-            data-effect="solid">
-            {likesCount} likes
-          </p>
-          <IoChatbubblesOutline className="chatbutton" onClick={()=>{setCommentBar(!commentBar)}}/>
-          <p>{commentCount > 0 ? commentCount+' comments' :''}</p>
-          <ReactTooltip />
-        </div>
-        <div className="left-container">
-          {idUser === user ? (
-            <>
-              <TiPencil
-                className="pencil-icon"
+      {sharing ? (
+        <DeleteConfirm>
+          <div className="confirm-container">
+            <h2>Do you want to re-post this link?</h2>
+            <div>
+              <button
+                className="cancel"
                 onClick={() => {
-                  editing ? cancelEdit() : openEdit();
+                  setSharing(false);
                 }}
-              />
-              <FaTrash
-                className="trash-icon"
-                onClick={() => {
-                  setExclude(true);
-                }}
-              />
-            </>
-          ) : (
-            <></>
-          )}
-
-          <p className="username" onClick={() => navigate(`/user/${idUser}`)}>{username}</p>
-          <p className="description">
-            {editing ? (
-              <textarea
-                disabled={loading}
-                ref={inputRef}
-                className="description-edit"
-                value={descriptionEdit}
-                onChange={(e) => {
-                  setDescriptionEdit(e.target.value);
-                }}
-                onKeyDown={verifyKey}
-              />
-            ) : (
-              <ReactHashtag
-                onHashtagClick={(hashtag) =>
-                  navigate(`/hashtag/${hashtag.replace("#", "")}`)
-                }
               >
-                {description}
-              </ReactHashtag>
-            )}
-          </p>
-
-          <div className="link-metadata" onClick={() => redirectToLink()}>
-            <div className="container-title-description">
-              <p className="link-title">{titleLink}</p>
-              <p className="link-description">{descriptionLink}</p>
-              <p className="link-url">{link}</p>
+                No, cancel
+              </button>
+              <button className="confirm" onClick={retweetPost}>
+                {loading ? loader : "Yes, share!"}
+              </button>
             </div>
-            <img src={imageLink} alt="Article"></img>
+          </div>
+        </DeleteConfirm>
+      ) : (
+        <></>
+      )}
+      <Div retweet={idPost}>
+        {(idPost ?
+          <div className="share-container">
+            <FaRetweet className="mini-retweet-icon" />
+            Re-posted by
+            <p>{userRetweet.username}</p>
+          </div> : <></>
+        )}
+
+        <div className="post-container">
+          <div className="right-container">
+            <img
+              src={picture}
+              alt={username}
+              onClick={() => navigate(`/user/${idUser}`)}
+            ></img>
+            {likePost ? (
+              <IoHeart className="likebutton marked" onClick={likePublishing} />
+            ) : (
+              <IoHeartOutline className="likebutton" onClick={() => {
+                if (!idPost) {
+                  likePublishing()
+                }
+              }} />
+            )}
+            <p
+              data-tip={tooltipString}
+              data-type="light"
+              data-place="bottom"
+              data-effect="solid">
+              {likesCount} likes
+            </p>
+            <IoChatbubblesOutline className="chatbutton" onClick={() => {
+              if (!idPost) {
+                setCommentBar(!commentBar)
+              }
+            }} />
+            <p>{`${commentCount} comments`}</p>
+            <FaRetweet className="share-icon" onClick={() => {
+              if (!idPost) {
+                setSharing(true);
+              }
+            }} />
+            <p>{`${shareCount} shares`}</p>
+            <ReactTooltip />
+          </div>
+          <div className="left-container">
+            {idUser === user ? (
+              <>
+                <TiPencil
+                  className="pencil-icon"
+                  onClick={() => {
+                    editing ? cancelEdit() : openEdit();
+                  }}
+                />
+                <FaTrash
+                  className="trash-icon"
+                  onClick={() => {
+                    setExclude(true);
+                  }}
+                />
+              </>
+            ) : (
+              <></>
+            )}
+
+            <p className="username" onClick={() => navigate(`/user/${idUser}`)}>{username}</p>
+            <p className="description">
+              {editing ? (
+                <textarea
+                  disabled={loading}
+                  ref={inputRef}
+                  className="description-edit"
+                  value={descriptionEdit}
+                  onChange={(e) => {
+                    setDescriptionEdit(e.target.value);
+                  }}
+                  onKeyDown={verifyKey}
+                />
+              ) : (
+                <ReactHashtag
+                  onHashtagClick={(hashtag) =>
+                    navigate(`/hashtag/${hashtag.replace("#", "")}`)
+                  }
+                >
+                  {description}
+                </ReactHashtag>
+              )}
+            </p>
+
+            <div className="link-metadata" onClick={() => redirectToLink()}>
+              <div className="container-title-description">
+                <p className="link-title">{titleLink}</p>
+                <p className="link-description">{descriptionLink}</p>
+                <p className="link-url">{link}</p>
+              </div>
+              <img src={imageLink} alt="Article"></img>
+            </div>
           </div>
         </div>
       </Div>
-      { commentBar ? 
-        <CommentSection post={props.post} setReset={setReset}/>
-        : <></> 
+      {commentBar ?
+        <CommentSection post={props.post} setReset={setReset} />
+        : <></>
       }
     </>
   );
@@ -431,8 +509,8 @@ const Div = styled.div`
   max-width: 100vw;
   background-color: #171717;
   margin-top: 19px;
-  padding: 9px 18px 15px 15px;
   display: flex;
+  flex-direction: column;
   /* justify-content: space-between; */
 
   .hide {
@@ -449,6 +527,35 @@ const Div = styled.div`
 
   .marked {
     color: #ac0000;
+  }
+
+  .share-container {
+    height: 33px;
+    width: 100%;
+    background-color: #1E1E1E;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 20px;
+    color: white;
+    font-size: 13px;
+
+    p {
+      font-weight: 700;
+      margin-left: 5px;
+    }
+  }
+
+  .mini-retweet-icon {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+
+  .post-container {
+    display: flex;
+    flex-direction: row;
+    padding: 9px 18px 15px 15px;
   }
 
   .right-container img {
@@ -496,6 +603,14 @@ const Div = styled.div`
     right: 0px;
     color: white;
     font-size: 15px;
+  }
+
+  .share-icon {
+    width: 100%;
+    margin-top: 10px;
+    align-items: center;
+    font-size: 17px;
+    color: #ffffff;
   }
 
   .pencil-icon {
@@ -599,7 +714,27 @@ const Div = styled.div`
   @media (min-width: 600px) {
     width: 611px;
     border-radius: 16px;
-    padding: 17px 21px 20px 18px;
+    padding: 17px 0 20px 0;
+    position: relative;
+    margin-top: ${(props) => (props.retweet ? "40px" : "19px")};
+
+    .post-container {
+      z-index: 2;
+      background-color: #171717;
+      padding: 9px 39px 15px 33px;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .share-container {
+      height: 60px;
+      position: absolute;
+      top: -20px;
+      right: 0;
+      align-items: flex-start;
+      padding-top: 11px;
+      z-index: 1;
+      border-radius: 20px 20px 0px 0px;
+    }
 
     .likebutton {
       margin-top: 19px;
