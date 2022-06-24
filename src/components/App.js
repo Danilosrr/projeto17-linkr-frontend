@@ -9,7 +9,9 @@ import SignUpScreen from "./SignUpScreen";
 import SignInScreen from "./SignInScreen";
 import TimelineScreen from "./TimelineScreen.js";
 import TimelineByHashtagScreen from "./TimelineByHashtagScreen.js";
-import UserTimelineScreen from "./UserTimelineScreen";
+import UserTimelineScreen from "./UserTimelineScreen.js";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+
 
 export default function App() {
   const [loading, setLoading] = useState(false);
