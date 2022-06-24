@@ -1,7 +1,10 @@
 import styled from "styled-components";
 import axios from "axios";
+import InfiniteScroll from 'react-infinite-scroller';
+import { TailSpin } from 'react-loader-spinner'
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useInterval from "use-interval";
 
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
@@ -9,16 +12,19 @@ import TrendingHashtags from "./shared/TrendingHashtags.js";
 import PublishPost from "./PublishPost.js";
 import PostCard from "./shared/PostCard.js";
 import SearchBar from "./shared/SearchBar.js";
+import AlertNewPosts from "./shared/AlertNewPosts.js";
 import UserContext from "../context/UserContext";
 
 export default function TimelineScreen() {
   const [refreshTimeline, setRefreshTimeline] = useState(false);
   const [posts, setPosts] = useState(["initial"]);
+  const [qtyNewPosts, setQtyNewPosts] = useState(0);
+  const [newPosts, setNewPosts] = useState([]);
   const { token, setToken } = useContext(UserContext);
   const [refresh, setRefresh] = useState([]);
   const [user, setUser] = useState({});
   const [followSomeone, setFollowSomeone] = useState(false);
-  let tokenObject = localStorage.getItem("tokenUser");
+  const [page, setPage] = useState(1);
 
   const navigate = useNavigate();
 
@@ -38,11 +44,22 @@ export default function TimelineScreen() {
   }, [refreshTimeline, token]);
   // eslint-disable-next-line
 
+  useInterval(() => {
+    if (!token.token) {
+      if (!localToken) {
+        navigate("/");
+      } else {
+        setToken({ ...localToken });
+      }
+    } else {
+      requestGetNewPosts();
+    }
+  }, 15000);
+
   useEffect(() => {
     if (!!token.token) {
       request();
     }
-    // eslint-disable-next-line
   }, [refresh]);
 
   async function request() {
@@ -69,13 +86,67 @@ export default function TimelineScreen() {
         setFollowSomeone(true);
       }
 
-      const response = await axios.get(`${URL}posts`, config);
-      setPosts(response.data);
+      const response = await axios.get(`${URL}posts?page=${page}`, config);
+      //const response = await axios.get(`http://localhost:4000/posts?page=${page}`, config);
+
+      if (posts[0] === "initial") {
+        setPosts(response.data);
+      } else {
+        setPosts([...posts, ...response.data]);
+      }
+
+      setPage(page + 1);
+
     } catch (e) {
       setPosts(["error"]);
-      console.log(e, "requestGet");
+      console.log(e, "requestGetPosts");
     }
   }
+
+  async function requestGetNewPosts() {
+    try {
+      if (posts[0] !== "initial" && posts[0] !== "error") {
+        const config = { headers: { Authorization: `Bearer ${token.token}` } };
+        const follows = await axios.get(`${URL}follows`, config);
+
+        if (follows.data.length === 0) {
+          setFollowSomeone(false);
+        } else {
+          setFollowSomeone(true);
+        }
+
+        const lastPostId = posts[0].id;
+
+        const newPosts = await axios.get(`${URL}posts/new/${lastPostId}`, config);
+        //const newPosts = await axios.get(`http://localhost:4000/posts/new/${lastPostId}`, config);
+
+        if (newPosts.data.length > 0) {
+          setNewPosts(newPosts.data);
+          setQtyNewPosts(newPosts.data.length);
+        }
+      }
+    } catch (e) {
+      console.log(e, "requestGetNewPosts");
+    }
+  }
+
+  function renderAlertNewPosts(qty) {
+    if (qty !== 0) {
+      return (
+        <div className="alert-new-posts-container">
+          <AlertNewPosts
+            qtyNewPosts={qtyNewPosts}
+            setQtyNewPosts={setQtyNewPosts}
+            newPosts={newPosts}
+            setNewPosts={setNewPosts}
+            posts={posts}
+            setPosts={setPosts}
+          />
+        </div>
+      );
+    }
+  }
+
 
   function renderPosts(posts) {
     if (posts.length === 0) {
@@ -149,7 +220,27 @@ export default function TimelineScreen() {
             refreshTimeline={refreshTimeline}
             setRefreshTimeline={setRefreshTimeline}
           />
-          {renderPosts(posts)}
+
+          {renderAlertNewPosts(qtyNewPosts)}
+
+
+          <div className="infite-scroll-container">
+            <InfiniteScroll
+              pageStart={0}
+              loadMore={requestGetPosts}
+              hasMore={true || false}
+              loader={
+                <div className="loader" key={page}>
+                  <TailSpin ariaLabel="loading-indicator" height="50" width="50" color='grey' />
+                  <p className="loader-text">Loading more posts...</p>
+                </div>}
+            >
+              {renderPosts(posts)}
+
+            </InfiniteScroll>
+          </div>
+
+
         </div>
         <div className="trending-hashtags-container">
           <TrendingHashtags />
@@ -215,6 +306,37 @@ const Div = styled.div`
     margin-top: 82px;
   }
 
+  .alert-new-posts-container {
+    margin-top: 40px;
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .infite-scroll-container {
+    height: auto;
+    overflow: auto;
+    overflow-y: hidden;
+  }
+
+  .loader {
+    margin-top: 83px;
+    padding-bottom: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loader-text {
+    margin-top: 10px;
+    font-family: 'Lato';
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: 0.05em;
+    color: #6D6D6D;
+  }
+
   @media (min-width: 600px) {
     display: flex;
     flex-direction: column;
@@ -240,6 +362,10 @@ const Div = styled.div`
       display: block;
       margin-left: 25px;
       margin-top: 255px;
+    }
+
+    .alert-new-posts-container {
+      padding: 0;
     }
   }
 `;
