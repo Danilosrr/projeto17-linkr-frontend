@@ -59,8 +59,8 @@ export default function CommentSection(props) {
   return(
     <>
     <Comments>
-      { postComments.map(comment => 
-        <div className="commentSection">
+      { postComments.map((comment, index) => 
+        <div className="commentSection" key={index}>
           <section className="comment">
               <img src={comment.picture} alt='user pic'/>
               <div className="commentContent">
