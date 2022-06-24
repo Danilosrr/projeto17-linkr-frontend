@@ -368,16 +368,16 @@ const Div = styled.div`
       margin-left: 25px;
       margin-top: 255px;
       width: 311px;
-      background-color: blue;
+      background-color: red;
       position: relative;
     }
 
     .trending-container {
-      display: block;
       width: 311px;
-      position: sticky;
-      top: 0px;
-      right: 0vw;
+      position: fixed;
+      top: 254px;
+      right: 0;
+      display: block;
     }
 
     .alert-new-posts-container {
