@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
+import SearchBar from "./shared/SearchBar";
 import PostCard from "./shared/PostCard.js";
 import TrendingHashtags from "./shared/TrendingHashtags.js";
 import UserContext from "../context/UserContext";
@@ -80,6 +81,9 @@ export default function TimelineByHashtagScreen() {
       <HeaderBar />
       <div className="timeline-screen-container">
         <div className="timeline-container">
+          <div className="search-container-mobile">
+            <SearchBar />
+          </div>
           <h1>{whitespace}</h1>
           <div className="message-container">
             <p className="message">Loading . . .</p>
@@ -95,6 +99,10 @@ export default function TimelineByHashtagScreen() {
       <HeaderBar />
       <div className="timeline-screen-container">
         <div className="timeline-container">
+          <div className="search-container-mobile">
+            <SearchBar />
+          </div>
+
           <h1>#{hashtag}</h1>
           {renderFilteredPosts(filteredPosts)}
         </div>
@@ -107,6 +115,8 @@ export default function TimelineByHashtagScreen() {
 }
 
 const Div = styled.div`
+  overflow-x: hidden;
+
   .timeline-screen-container {
     margin: 0 auto;
     display: flex;
@@ -120,7 +130,9 @@ const Div = styled.div`
     font-size: 33px;
     line-height: 49px;
     color: white;
-    margin: calc(19px + 72px) 0 19px 17px;
+    margin: 19px 0 19px 30px;
+    width: 100%;
+    text-align: left;
   }
 
   .message-container {
@@ -144,6 +156,16 @@ const Div = styled.div`
     text-align: center;
   }
 
+  .timeline-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .search-container-mobile {
+    margin-top: 82px;
+  }
+
   .trending-hashtags-container {
     display: none;
   }
@@ -159,6 +181,10 @@ const Div = styled.div`
       font-size: 43px;
       line-height: 64px;
       margin: calc(78px + 72px) 0 43px;
+    }
+
+    .search-container-mobile {
+      display: none;
     }
 
     .timeline-screen-container {

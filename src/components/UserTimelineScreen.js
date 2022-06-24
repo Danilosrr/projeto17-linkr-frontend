@@ -363,6 +363,10 @@ const Div = styled.div`
       }
     }
 
+    .message-container {
+      width: 611px;
+    }
+
     h1 {
       width: 100%;
       font-size: 43px;
