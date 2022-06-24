@@ -29,7 +29,7 @@ export default function SearchBar() {
     }
   }, [refresh]);
 
-  console.log(search);
+  //console.log(search);
   return (
     <Container>
       <SearchBarDiv>

@@ -2,6 +2,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useInterval from "use-interval";
 
 import "./../assets/css/fonts.css";
 import HeaderBar from "./shared/HeaderBar.js";
@@ -9,16 +10,18 @@ import TrendingHashtags from "./shared/TrendingHashtags.js";
 import PublishPost from "./PublishPost.js";
 import PostCard from "./shared/PostCard.js";
 import SearchBar from "./shared/SearchBar.js";
+import AlertNewPosts from "./shared/AlertNewPosts.js";
 import UserContext from "../context/UserContext";
 
 export default function TimelineScreen() {
   const [refreshTimeline, setRefreshTimeline] = useState(false);
   const [posts, setPosts] = useState(["initial"]);
+  const [qtyNewPosts, setQtyNewPosts] = useState(0);
+  const [newPosts, setNewPosts] = useState([]);
   const { token, setToken } = useContext(UserContext);
   const [refresh, setRefresh] = useState([]);
   const [user, setUser] = useState({});
   const [followSomeone, setFollowSomeone] = useState(false);
-  let tokenObject = localStorage.getItem("tokenUser");
 
   const navigate = useNavigate();
 
@@ -38,11 +41,22 @@ export default function TimelineScreen() {
   }, [refreshTimeline, token]);
   // eslint-disable-next-line
 
+  useInterval(() => {
+    if (!token.token) {
+      if (!localToken) {
+        navigate("/");
+      } else {
+        setToken({ ...localToken });
+      }
+    } else {
+      requestGetNewPosts();
+    }
+  }, 2000);
+
   useEffect(() => {
     if (!!token.token) {
       request();
     }
-    // eslint-disable-next-line
   }, [refresh]);
 
   async function request() {
@@ -76,6 +90,50 @@ export default function TimelineScreen() {
       console.log(e, "requestGet");
     }
   }
+
+  async function requestGetNewPosts() {
+    console.log("requestGetNewPosts");
+    try {
+      const config = { headers: { Authorization: `Bearer ${token.token}` } };
+      const follows = await axios.get(`${URL}follows`, config);
+
+      if (follows.data.length === 0) {
+        setFollowSomeone(false);
+      } else {
+        setFollowSomeone(true);
+      }
+
+      const lastPostId = posts[0].id;
+
+      const newPosts = await axios.get(`${URL}posts/new/${lastPostId}`, config);
+
+      if (newPosts.data.length > 0){
+        setNewPosts(newPosts.data);
+        setQtyNewPosts(newPosts.data.length);
+      }
+
+    } catch (e) {
+      console.log(e, "requestGet");
+    }
+  }
+
+  function renderAlertNewPosts(qty){
+    if (qty !== 0){
+      return (
+        <div className="alert-new-posts-container">
+          <AlertNewPosts 
+            qtyNewPosts={qtyNewPosts} 
+            setQtyNewPosts={setQtyNewPosts}
+            newPosts={newPosts}
+            setNewPosts={setNewPosts}
+            posts={posts}
+            setPosts={setPosts}
+          />
+        </div>
+      );
+    }
+  }
+
 
   function renderPosts(posts) {
     if (posts.length === 0) {
@@ -149,6 +207,9 @@ export default function TimelineScreen() {
             refreshTimeline={refreshTimeline}
             setRefreshTimeline={setRefreshTimeline}
           />
+
+          {renderAlertNewPosts(qtyNewPosts)}
+
           {renderPosts(posts)}
         </div>
         <div className="trending-hashtags-container">
@@ -215,6 +276,12 @@ const Div = styled.div`
     margin-top: 82px;
   }
 
+  .alert-new-posts-container {
+    margin-top: 40px;
+    width: 100%;
+    padding: 0 20px;
+  }
+
   @media (min-width: 600px) {
     display: flex;
     flex-direction: column;
@@ -240,6 +307,10 @@ const Div = styled.div`
       display: block;
       margin-left: 25px;
       margin-top: 255px;
+    }
+
+    .alert-new-posts-container {
+      padding: 0;
     }
   }
 `;
