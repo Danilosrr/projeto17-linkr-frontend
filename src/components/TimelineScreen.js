@@ -51,7 +51,7 @@ export default function TimelineScreen() {
     } else {
       requestGetNewPosts();
     }
-  }, 10000);
+  }, 2000);
 
   useEffect(() => {
     if (!!token.token) {

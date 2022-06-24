@@ -5,8 +5,14 @@ export default function AlertNewPosts(props){
 
     const {qtyNewPosts, setQtyNewPosts, newPosts, setNewPosts, posts, setPosts} = props;
 
+    async function showNewPosts(){
+    
+        await setQtyNewPosts(0);
+        setPosts([...newPosts, ...posts]);
+    }
+
     return (
-        <Div>
+        <Div onClick={showNewPosts}>
             <p>{qtyNewPosts} new { qtyNewPosts > 1 ? <span>posts</span> : <span>post</span>}, load more!</p>
             <FiRefreshCw></FiRefreshCw>
         </Div>
