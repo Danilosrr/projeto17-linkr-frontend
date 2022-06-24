@@ -278,7 +278,7 @@ export default function PostCard(props) {
       ) : (
         <></>
       )}
-      <Div>
+      <Div retweet={idPost}>
         {(idPost ?
           <div className="share-container">
             <FaRetweet className="mini-retweet-icon" />
@@ -687,7 +687,27 @@ const Div = styled.div`
   @media (min-width: 600px) {
     width: 611px;
     border-radius: 16px;
-    padding: 17px 21px 20px 18px;
+    padding: 17px 0 20px 0;
+    position: relative;
+    margin-top: ${(props) => (props.retweet ? "40px" : "19px")};
+
+    .post-container {
+      z-index: 2;
+      background-color: #171717;
+      padding: 9px 39px 15px 33px;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .share-container {
+      height: 60px;
+      position: absolute;
+      top: -20px;
+      right: 0;
+      align-items: flex-start;
+      padding-top: 11px;
+      z-index: 1;
+      border-radius: 20px 20px 0px 0px;
+    }
 
     .likebutton {
       margin-top: 19px;
