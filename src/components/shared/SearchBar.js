@@ -40,6 +40,7 @@ export default function SearchBar() {
             setSearch(event.target.value);
             setRefresh(!refresh);
           }}
+          value={search}
           placeholder="Search for people and friends"
         />
         {/* <input placeholder="Search for people and friends"></input> */}
@@ -57,9 +58,21 @@ export default function SearchBar() {
         <ResultContainer>
           {searchResult.map((result, index) => {
             return (
-              <li key={index} onClick={() => navigate(`/user/${result.id}`)}>
+              <li
+                key={index}
+                onClick={() => {
+                  setSearchResult([]);
+                  setSearch("");
+                  navigate(`/user/${result.id}`);
+                }}
+              >
                 <img src={result.picture} alt="user" />
                 <p>{result.username}</p>
+                {result.follow ? (
+                  <p className="following">&#8226; following</p>
+                ) : (
+                  <></>
+                )}
               </li>
             );
           })}
@@ -97,6 +110,11 @@ const ResultContainer = styled.ul`
       font-size: 19px;
       line-height: 23px;
       color: #515151;
+    }
+
+    .following {
+      color: #c5c5c5;
+      margin-left: 7px;
     }
   }
 

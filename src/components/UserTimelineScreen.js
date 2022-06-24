@@ -47,7 +47,7 @@ export default function UserTimelineScreen() {
   useEffect(() => {
     request();
     // eslint-disable-next-line
-  }, [refresh]);
+  }, [refresh, id]);
 
   useEffect(() => {
     checkFollowing();
@@ -60,10 +60,7 @@ export default function UserTimelineScreen() {
       };
       const response = await axios.get(`${URL}user/${id}`, config);
       const user = await axios.get(`${URL}userToken`, config);
-      const pageUserResult = await axios.get(
-        `${URL}users/${id}`,
-        config
-      );
+      const pageUserResult = await axios.get(`${URL}users/${id}`, config);
       setPageUser(pageUserResult.data);
       setPosts(response.data);
       setUser(user.data);
