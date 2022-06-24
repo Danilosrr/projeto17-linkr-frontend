@@ -117,7 +117,7 @@ export default function PostCard(props) {
   }, [likesUsers]);
 
   function likePublishing() {
-    console.log(props.post);
+    // console.log(props.post);
     setLoading(true);
     const promise = axios.post(
       `${URL}posts/like`,
@@ -130,7 +130,7 @@ export default function PostCard(props) {
     );
     promise.then((response) => {
       setLikePost(true);
-      console.log(response);
+      // console.log(response);
       setLoading(false);
       setReset([]);
     });
