@@ -151,4 +151,8 @@ const Div = styled.div`
         letter-spacing: 0.05em;
         padding-left: 16px;
     }
+
+    .trending-container {
+        margin-top: 80px;
+    }
 `;

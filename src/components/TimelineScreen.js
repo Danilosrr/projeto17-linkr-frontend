@@ -89,7 +89,7 @@ export default function TimelineScreen() {
 
       const response = await axios.get(`${URL}posts?page=${page}`, config);
       //const response = await axios.get(`http://localhost:4000/posts?page=${page}`, config);
-
+      
       if (posts[0] === "initial") {
         setPosts(response.data);
       } else {
@@ -247,9 +247,12 @@ export default function TimelineScreen() {
             </InfiniteScroll>
           </div>
         </div>
-        <div className="trending-hashtags-container">
-          <TrendingHashtags />
+        <div className="trending-virtual-container">
+          <div className="trending-container">
+            <TrendingHashtags />
+          </div>
         </div>
+
       </div>
     </Div>
   );
@@ -303,9 +306,11 @@ const Div = styled.div`
     text-align: center;
   }
 
-  .trending-hashtags-container {
+  .trending-virtual-container,
+  .trending-container {
     display: none;
   }
+  
 
   .search-container-mobile {
     margin-top: 82px;
@@ -363,10 +368,19 @@ const Div = styled.div`
       max-width: 937px;
     }
 
-    .trending-hashtags-container {
+    .trending-virtual-container {
       display: block;
       margin-left: 25px;
       margin-top: 255px;
+      width: 311px;
+      position: relative;
+    }
+
+    .trending-container {
+      width: 311px;
+      position: fixed;
+      top: 254px;
+      display: block;
     }
 
     .alert-new-posts-container {
