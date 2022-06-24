@@ -88,7 +88,7 @@ export default function TimelineScreen() {
 
       const response = await axios.get(`${URL}posts?page=${page}`, config);
       //const response = await axios.get(`http://localhost:4000/posts?page=${page}`, config);
-
+      
       if (posts[0] === "initial") {
         setPosts(response.data);
       } else {
@@ -174,11 +174,11 @@ export default function TimelineScreen() {
       );
     }
 
-    return posts.map((post) => {
-      const { id } = post;
+    return posts.map((post, index) => {
+      //const { id } = post;
 
       return (
-        <PostCard key={id} post={post} user={user.id} refresh={setRefresh} />
+        <PostCard key={index} post={post} user={user.id} refresh={setRefresh} />
       );
     });
   }
@@ -376,7 +376,6 @@ const Div = styled.div`
       width: 311px;
       position: fixed;
       top: 254px;
-      right: 0;
       display: block;
     }
 
