@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import axios from "axios";
+import InfiniteScroll from 'react-infinite-scroller';
+import { TailSpin } from 'react-loader-spinner'
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useInterval from "use-interval";
@@ -22,6 +24,7 @@ export default function TimelineScreen() {
   const [refresh, setRefresh] = useState([]);
   const [user, setUser] = useState({});
   const [followSomeone, setFollowSomeone] = useState(false);
+  const [page, setPage] = useState(1);
 
   const navigate = useNavigate();
 
@@ -51,7 +54,7 @@ export default function TimelineScreen() {
     } else {
       requestGetNewPosts();
     }
-  }, 2000);
+  }, 15000);
 
   useEffect(() => {
     if (!!token.token) {
@@ -83,46 +86,56 @@ export default function TimelineScreen() {
         setFollowSomeone(true);
       }
 
-      const response = await axios.get(`${URL}posts`, config);
-      setPosts(response.data);
+      const response = await axios.get(`${URL}posts?page=${page}`, config);
+      //const response = await axios.get(`http://localhost:4000/posts?page=${page}`, config);
+
+      if (posts[0] === "initial") {
+        setPosts(response.data);
+      } else {
+        setPosts([...posts, ...response.data]);
+      }
+
+      setPage(page + 1);
+
     } catch (e) {
       setPosts(["error"]);
-      console.log(e, "requestGet");
+      console.log(e, "requestGetPosts");
     }
   }
 
   async function requestGetNewPosts() {
-    console.log("requestGetNewPosts");
     try {
-      const config = { headers: { Authorization: `Bearer ${token.token}` } };
-      const follows = await axios.get(`${URL}follows`, config);
+      if (posts[0] !== "initial" && posts[0] !== "error") {
+        const config = { headers: { Authorization: `Bearer ${token.token}` } };
+        const follows = await axios.get(`${URL}follows`, config);
 
-      if (follows.data.length === 0) {
-        setFollowSomeone(false);
-      } else {
-        setFollowSomeone(true);
+        if (follows.data.length === 0) {
+          setFollowSomeone(false);
+        } else {
+          setFollowSomeone(true);
+        }
+
+        const lastPostId = posts[0].id;
+
+        //const newPosts = await axios.get(`${URL}posts/new/${lastPostId}`, config);
+        const newPosts = await axios.get(`http://localhost:4000/posts/new/${lastPostId}`, config);
+
+        if (newPosts.data.length > 0) {
+          setNewPosts(newPosts.data);
+          setQtyNewPosts(newPosts.data.length);
+        }
       }
-
-      const lastPostId = posts[0].id;
-
-      const newPosts = await axios.get(`${URL}posts/new/${lastPostId}`, config);
-
-      if (newPosts.data.length > 0){
-        setNewPosts(newPosts.data);
-        setQtyNewPosts(newPosts.data.length);
-      }
-
     } catch (e) {
-      console.log(e, "requestGet");
+      console.log(e, "requestGetNewPosts");
     }
   }
 
-  function renderAlertNewPosts(qty){
-    if (qty !== 0){
+  function renderAlertNewPosts(qty) {
+    if (qty !== 0) {
       return (
         <div className="alert-new-posts-container">
-          <AlertNewPosts 
-            qtyNewPosts={qtyNewPosts} 
+          <AlertNewPosts
+            qtyNewPosts={qtyNewPosts}
             setQtyNewPosts={setQtyNewPosts}
             newPosts={newPosts}
             setNewPosts={setNewPosts}
@@ -210,7 +223,24 @@ export default function TimelineScreen() {
 
           {renderAlertNewPosts(qtyNewPosts)}
 
-          {renderPosts(posts)}
+
+          <div className="infite-scroll-container">
+            <InfiniteScroll
+              pageStart={0}
+              loadMore={requestGetPosts}
+              hasMore={true || false}
+              loader={
+                <div className="loader" key={page}>
+                  <TailSpin ariaLabel="loading-indicator" height="50" width="50" color='grey' />
+                  <p className="loader-text">Loading more posts...</p>
+                </div>}
+            >
+              {renderPosts(posts)}
+
+            </InfiniteScroll>
+          </div>
+
+
         </div>
         <div className="trending-hashtags-container">
           <TrendingHashtags />
@@ -280,6 +310,31 @@ const Div = styled.div`
     margin-top: 40px;
     width: 100%;
     padding: 0 20px;
+  }
+
+  .infite-scroll-container {
+    height: auto;
+    overflow: auto;
+    overflow-y: hidden;
+  }
+
+  .loader {
+    margin-top: 83px;
+    padding-bottom: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .loader-text {
+    margin-top: 10px;
+    font-family: 'Lato';
+    font-size: 22px;
+    line-height: 26px;
+    letter-spacing: 0.05em;
+    color: #6D6D6D;
   }
 
   @media (min-width: 600px) {
