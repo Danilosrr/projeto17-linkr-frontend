@@ -3,12 +3,12 @@ import styled from "styled-components";
 export default function AlertNewPosts(props){
     return (
         <Div>
-            TESTE
+            Component created
         </Div>
     );
 }
 
 const Div = styled.div`
-
+    color: white;
 
 `;
