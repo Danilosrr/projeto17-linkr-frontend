@@ -374,7 +374,6 @@ const Div = styled.div`
       margin-left: 25px;
       margin-top: 255px;
       width: 311px;
-      background-color: red;
       position: relative;
     }
 
