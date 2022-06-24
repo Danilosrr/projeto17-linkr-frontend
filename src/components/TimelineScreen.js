@@ -66,7 +66,7 @@ export default function TimelineScreen() {
   async function request() {
     try {
       const config = { headers: { Authorization: `Bearer ${token.token}` } };
-      const response = await axios.get(`${URL}posts`, config);
+      const response = await axios.get(`${URL}posts?page=1`, config);
       const user = await axios.get(`${URL}userToken`, config);
       setPosts(response.data);
       setUser(user.data);
@@ -180,7 +180,6 @@ export default function TimelineScreen() {
     }
 
     return posts.map((post, index) => {
-
       return (
         <PostCard key={index} post={post} user={user.id} refresh={setRefresh} />
       );
