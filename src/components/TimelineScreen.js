@@ -25,6 +25,7 @@ export default function TimelineScreen() {
   const [user, setUser] = useState({});
   const [followSomeone, setFollowSomeone] = useState(false);
   const [page, setPage] = useState(1);
+  const [loadMore, setLoadMore] = useState(true);
 
   const navigate = useNavigate();
 
@@ -95,6 +96,9 @@ export default function TimelineScreen() {
         setPosts([...posts, ...response.data]);
       }
 
+      if (response.data.length === 0) {
+        setLoadMore(false);
+      }
       setPage(page + 1);
     } catch (e) {
       setPosts(["error"]);
@@ -228,7 +232,7 @@ export default function TimelineScreen() {
             <InfiniteScroll
               pageStart={0}
               loadMore={requestGetPosts}
-              hasMore={posts.length === 0 ? false : true || false}
+              hasMore={loadMore}
               loader={
                 <div className="loader" key={page}>
                   <TailSpin
