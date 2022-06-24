@@ -119,17 +119,18 @@ export default function TimelineScreen() {
   }
 
   function renderAlertNewPosts(qty){
-    //console.log("qty", qty);
     if (qty !== 0){
       return (
-        <AlertNewPosts 
-          qtyNewPosts={qtyNewPosts} 
-          setQtyNewPosts={setQtyNewPosts}
-          newPosts={newPosts}
-          setNewPosts={setNewPosts}
-          posts={posts}
-          setPosts={setPosts}
-        />
+        <div className="alert-new-posts-container">
+          <AlertNewPosts 
+            qtyNewPosts={qtyNewPosts} 
+            setQtyNewPosts={setQtyNewPosts}
+            newPosts={newPosts}
+            setNewPosts={setNewPosts}
+            posts={posts}
+            setPosts={setPosts}
+          />
+        </div>
       );
     }
   }
@@ -276,6 +277,12 @@ const Div = styled.div`
     margin-top: 82px;
   }
 
+  .alert-new-posts-container {
+    margin-top: 40px;
+    width: 100%;
+    padding: 0 20px;
+  }
+
   @media (min-width: 600px) {
     display: flex;
     flex-direction: column;
@@ -301,6 +308,10 @@ const Div = styled.div`
       display: block;
       margin-left: 25px;
       margin-top: 255px;
+    }
+
+    .alert-new-posts-container {
+      padding: 0;
     }
   }
 `;
