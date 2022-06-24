@@ -151,9 +151,12 @@ export default function TimelineScreen() {
           />
           {renderPosts(posts)}
         </div>
-        <div className="trending-hashtags-container">
-          <TrendingHashtags />
+        <div className="trending-virtual-container">
+          <div className="trending-container">
+            <TrendingHashtags />
+          </div>
         </div>
+
       </div>
     </Div>
   );
@@ -207,9 +210,11 @@ const Div = styled.div`
     text-align: center;
   }
 
-  .trending-hashtags-container {
+  .trending-virtual-container,
+  .trending-container {
     display: none;
   }
+  
 
   .search-container-mobile {
     margin-top: 82px;
@@ -236,10 +241,21 @@ const Div = styled.div`
       max-width: 937px;
     }
 
-    .trending-hashtags-container {
+    .trending-virtual-container {
       display: block;
       margin-left: 25px;
       margin-top: 255px;
+      width: 311px;
+      background-color: blue;
+      position: relative;
+    }
+
+    .trending-container {
+      display: block;
+      width: 311px;
+      position: sticky;
+      top: 0px;
+      right: 0vw;
     }
   }
 `;
