@@ -179,11 +179,10 @@ export default function TimelineScreen() {
       );
     }
 
-    return posts.map((post) => {
-      const { id } = post;
+    return posts.map((post, index) => {
 
       return (
-        <PostCard key={id} post={post} user={user.id} refresh={setRefresh} />
+        <PostCard key={index} post={post} user={user.id} refresh={setRefresh} />
       );
     });
   }
