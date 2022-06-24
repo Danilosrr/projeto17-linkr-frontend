@@ -28,6 +28,7 @@ export default function PostCard(props) {
   const [loading, setLoading] = useState(false);
   const [likePost, setLikePost] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [sharing, setSharing] = useState(false);
   const [descriptionEdit, setDescriptionEdit] = useState("");
   const [description, setDescription] = useState(props.post.description);
   const [likesCount, setLikesCount] = useState(0);
@@ -244,14 +245,18 @@ export default function PostCard(props) {
   }
 
   const retweetPost = async () => {
+    setLoading(true);
     try {
       const config = { headers: { Authorization: `Bearer ${JSON.parse(tokenObject).token}` } };
       await axios.post(`${URL}posts/share`, { idPost: id }, config);
       setReset([]);
+      setSharing(false);
     } catch (e) {
       console.log(e.message);
+      setSharing(false);
       alert("Não foi possível retweetar o post!");
     }
+    setLoading(false);
   }
 
   return (
@@ -271,6 +276,28 @@ export default function PostCard(props) {
               </button>
               <button className="confirm" onClick={deletePost}>
                 {loading ? loader : "Yes, delete it"}
+              </button>
+            </div>
+          </div>
+        </DeleteConfirm>
+      ) : (
+        <></>
+      )}
+      {sharing ? (
+        <DeleteConfirm>
+          <div className="confirm-container">
+            <h2>Do you want to re-post this link?</h2>
+            <div>
+              <button
+                className="cancel"
+                onClick={() => {
+                  setSharing(false);
+                }}
+              >
+                No, cancel
+              </button>
+              <button className="confirm" onClick={retweetPost}>
+                {loading ? loader : "Yes, share!"}
               </button>
             </div>
           </div>
@@ -318,7 +345,7 @@ export default function PostCard(props) {
             <p>{`${commentCount} comments`}</p>
             <FaRetweet className="share-icon" onClick={() => {
               if (!idPost) {
-                retweetPost();
+                setSharing(true);
               }
             }} />
             <p>{`${shareCount} shares`}</p>
