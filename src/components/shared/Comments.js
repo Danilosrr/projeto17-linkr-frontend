@@ -64,7 +64,7 @@ export default function CommentSection(props) {
           <section className="comment">
               <img src={comment.picture} alt='user pic'/>
               <div className="commentContent">
-                  <h3>{comment.username}</h3>
+                  <span><h3>{comment.username}</h3><p>{comment.type!=''?'• '+comment.type:''}</p></span>
                   <p>{comment.comment}</p>
               </div>
           </section>
@@ -119,8 +119,15 @@ const Comments = styled.section`
     font-size: 14px;
     line-height: 16.8px;
   }
-  .commentContent h3 {
+  span {
+    display: flex;
+    gap: 5px;
+  }
+  .commentContent span h3 {
     font-weight: 700;
+  }
+  .commentContent span p {
+    color: #565656;
   }
 `
 const PostComment = styled.section`
