@@ -26,7 +26,6 @@ export default function TimelineByHashtagScreen() {
     if (!token.token) {
       if (!localToken) {
         navigate("/");
-        console.log("teste");
       } else {
         setToken({ ...localToken });
       }

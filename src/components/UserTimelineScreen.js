@@ -35,14 +35,12 @@ export default function UserTimelineScreen() {
     if (!token.token) {
       if (!localToken) {
         navigate("/");
-        console.log("teste");
       } else {
         setToken({ ...localToken });
       }
     }
     requestGetUserPosts();
   }, [refreshTimeline]);
-  // eslint-disable-next-line
 
   useEffect(() => {
     request();
